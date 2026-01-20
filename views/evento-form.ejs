@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      <%= evento ? "Modifica Evento" : "Nuovo Evento" %> - ComixCity
+    </title>
+    <link rel="stylesheet" href="/css/stile.css" />
+  </head>
+  <body>
+    <%- include('partials/navbar1') %>
+
+    <section class="background-gradient form-admin-evento">
+      <div class="evento-form-container anim-fade-up">
+        <!-- TITOLO -->
+        <h1 class="anim-fade-up">
+          <%= evento ? "✏️ Modifica Evento" : "🎉 Crea un Nuovo Evento" %>
+        </h1>
+
+        <!-- FORM PRINCIPALE -->
+        <form
+          action="<%= evento ? '/eventi/modifica/' + evento.id : '/eventi/nuovo' %>"
+          method="POST"
+          class="evento-form"
+        >
+          <!-- Titolo Evento -->
+          <div class="form-group anim-slide-right delay-100">
+            <label for="titolo">Titolo Evento</label>
+            <input
+              type="text"
+              id="titolo"
+              name="titolo"
+              required
+              value="<%= evento?.titolo || '' %>"
+              placeholder="Es: Torneo Retro Gaming"
+              autocomplete="off"
+            />
+          </div>
+
+          <!-- Descrizione -->
+          <div class="form-group anim-slide-right delay-200">
+            <label for="descrizione">Descrizione</label>
+            <textarea
+              id="descrizione"
+              name="descrizione"
+              required
+              placeholder="Descrivi l'evento in dettaglio..."
+              rows="5"
+            >
+<%= evento?.descrizione || '' %></textarea
+            >
+            <small class="form-help"
+              >Minimo 20 caratteri per una descrizione efficace</small
+            >
+          </div>
+
+          <!-- Data Evento -->
+          <div class="form-group anim-slide-right delay-300">
+            <label for="data">📅 Data Evento</label>
+            <input
+              type="date"
+              id="data"
+              name="data"
+              required
+              value="<%= evento?.data?.slice(0, 10) || '' %>"
+              min="<%= new Date().toISOString().split('T')[0] %>"
+            />
+            <small class="form-help">Seleziona una data futura</small>
+          </div>
+
+          <!-- Luogo / Stand Evento -->
+          <div class="form-group anim-slide-right delay-350">
+            <label for="luogo">📍 Luogo / Stand</label>
+            <input
+              type="text"
+              id="luogo"
+              name="luogo"
+              value="<%= evento?.luogo || '' %>"
+              placeholder="Es: Stand A3 – Padiglione Games"
+              maxlength="100"
+              autocomplete="off"
+            />
+            <small class="form-help"
+              >Indica dove si svolge (stand, sala o area)</small
+            >
+          </div>
+
+          <!-- URL Immagine -->
+          <div class="form-group anim-slide-right delay-400">
+            <label for="img">🖼️ URL Immagine</label>
+            <input
+              type="url"
+              id="img"
+              name="img"
+              value="<%= evento?.img || '' %>"
+              placeholder="https://esempio.com/immagine.jpg"
+              pattern="https?://.+"
+              title="Inserisci un URL valido che inizia con http:// o https://"
+            />
+            <small class="form-help"
+              >Link diretto all'immagine dell'evento (opzionale)</small
+            >
+          </div>
+
+          <div class="form-group">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="prenotabile"
+              name="prenotabile" value="1" <%= evento && evento.prenotabile ===
+              1 ? 'checked' : '' %>>
+              <label class="form-check-label" for="prenotabile">
+                Richiede prenotazione
+              </label>
+            </div>
+            <small class="form-text text-muted">
+              Se disabilitato, l'evento sarà ad accesso libero (nessuna
+              prenotazione necessaria)
+            </small>
+          </div>
+
+          <!-- Anteprima Immagine (opzionale) -->
+          <% if (evento?.img) { %>
+          <div class="form-group anim-fade-up delay-450">
+            <label>Anteprima immagine attuale:</label>
+            <div class="img-preview">
+              <img
+                src="<%= evento.img %>"
+                alt="<%= evento.titolo %>"
+                style="max-width: 100%; border-radius: 8px; margin-top: 0.5rem"
+              />
+            </div>
+          </div>
+          <% } %>
+
+          <!-- Pulsante Salva/Crea -->
+          <button type="submit" class="btn anim-fade-up delay-600">
+            <%= evento ? "💾 Salva Modifiche" : "✨ Crea Evento" %>
+          </button>
+        </form>
+
+        <!-- FORM ELIMINAZIONE (solo se in modalità modifica) -->
+        <% if (evento) { %>
+        <div class="delete-section anim-fade-up delay-700">
+          <hr
+            style="margin: 2rem 0; border: none; border-top: 1px solid #e0e0e0"
+          />
+          <h3 style="color: var(--colore-primario); margin-bottom: 1rem">
+            ⚠️ Zona Pericolosa
+          </h3>
+          <p style="color: #666; margin-bottom: 1rem">
+            Questa azione eliminerà definitivamente l'evento e non può essere
+            annullata.
+          </p>
+          <form
+            action="/eventi/elimina/<%= evento.id %>"
+            method="POST"
+            onsubmit="return confirm('⚠️ SEI SICURO?\n\nQuesta azione eliminerà definitivamente l\'evento:\n\n📌 <%= evento.titolo %>\n\n❌ Non sarà possibile recuperarlo!');"
+          >
+            <button type="submit" class="btn btn-secondary">
+              🗑️ Elimina Evento
+            </button>
+          </form>
+        </div>
+        <% } %>
+
+        <!-- Link di navigazione -->
+        <div class="form-actions anim-fade-up delay-800">
+          <a href="/admin" class="link-back">← Torna alla Dashboard Admin</a>
+        </div>
+      </div>
+    </section>
+
+    <%- include('partials/footer') %>
+    <script src="/js/script.js"></script>
+
+    <!-- Script per anteprima immagine live (opzionale) -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const imgInput = document.getElementById("img");
+        const form = imgInput.closest("form");
+
+        // Crea container anteprima se non esiste
+        if (!document.querySelector(".img-preview")) {
+          const previewDiv = document.createElement("div");
+          previewDiv.className = "form-group img-preview-container";
+          previewDiv.style.display = "none";
+          previewDiv.innerHTML = `
+          <label>📸 Anteprima:</label>
+          <div class="img-preview">
+            <img id="imgPreview" src="" alt="Anteprima" style="max-width: 100%; border-radius: 8px; margin-top: 0.5rem;">
+          </div>
+        `;
+          imgInput
+            .closest(".form-group")
+            .insertAdjacentElement("afterend", previewDiv);
+        }
+
+        // Gestisci cambio URL
+        imgInput.addEventListener("input", function () {
+          const url = this.value.trim();
+          const previewContainer = document.querySelector(
+            ".img-preview-container"
+          );
+          const previewImg = document.getElementById("imgPreview");
+
+          if (
+            url &&
+            (url.startsWith("http://") || url.startsWith("https://"))
+          ) {
+            previewContainer.style.display = "block";
+            previewImg.src = url;
+
+            // Gestisci errore caricamento
+            previewImg.onerror = function () {
+              previewContainer.innerHTML =
+                "<p style=\"color: #dc3545; font-size: 0.9rem;\">⚠️ Impossibile caricare l'immagine. Verifica l'URL.</p>";
+            };
+          } else {
+            previewContainer.style.display = "none";
+          }
+        });
+
+        // Trigger per mostrare anteprima se c'è già un URL
+        if (imgInput.value) {
+          imgInput.dispatchEvent(new Event("input"));
+        }
+      });
+    </script>
+  </body>
+</html>

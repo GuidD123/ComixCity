@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrazione - ComixCity</title>
+  <link rel="stylesheet" href="/css/stile.css" />
+</head>
+
+<body>
+  <%- include('partials/navbar1') %>
+  <%- include('partials/flashmex') %>
+
+  
+  <section class="background-gradient">
+
+    
+    <section class="hero2 login-hero">
+      <div class="hero-content-chisiamo">
+        <h1 class="anim-fade-up delay-300">Unisciti a noi!</h1>
+        <h2 class="anim-fade-up delay-300">Diventa parte della community di ComixCity!</h2>
+      </div>
+    </section>
+
+    <section class="login-main">
+      <div class="login-container"> 
+        <h2 class="anim-fade-up">Crea il tuo account</h2>
+        
+        <form action="/register" method="POST" class="login-form">
+          
+          <div class="form-group anim-fade-up delay-200">
+            <label for="username">Username</label>
+            <input 
+              type="text" 
+              id="username" 
+              name="username" 
+              autocomplete="new-username"
+              required 
+              pattern="[a-zA-Z0-9_]{3,30}"
+              title="Solo lettere, numeri e underscore (_), 3-30 caratteri. No spazi, no caratteri speciali."
+              placeholder="Es: mario_rossi123" 
+            />
+            <small class="form-help">Solo lettere, numeri e _ ; da 3 a 30 caratteri.</small>
+          </div>
+
+          <div class="form-group anim-fade-up delay-300">
+            <label for="email">Email</label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              required 
+              pattern="[^@\s]+@[^@\s]+\.[^@\s]+"
+              title="Inserisci un'email valida"
+              placeholder="mario@esempio.com" 
+            />
+          </div>
+
+          <div class="form-group anim-fade-up delay-400">
+            <label for="password">Password</label>
+            <input 
+              type="password" 
+              id="password" 
+              name="password" 
+              autocomplete="new-password"
+              required
+              pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$"
+              title="Minimo 8 caratteri, almeno una maiuscola, una minuscola e un numero"
+              placeholder="Password sicura..." 
+            />
+            <small class="form-help">Minimo 8 caratteri, almeno una maiuscola, una minuscola e un numero.</small>
+          </div>
+
+          <div class="form-group anim-fade-up delay-500">
+            <label for="ruolo">Registrati come:</label>
+            <select name="ruolo" id="ruolo" required>
+              <option value="">-- Seleziona il tuo ruolo --</option>
+              <option value="utente">🎫 Utente (Visita eventi e acquista biglietti)</option>
+              <option value="espositore">🎨 Espositore (Prenota stand e partecipa come venditore)</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn anim-fade-up delay-600">
+            Registrati ora
+          </button>
+        </form>
+
+        <p class="form-link anim-fade-up delay-800">
+          Hai già un account? <a href="/login">Accedi qui</a>
+        </p>
+        
+        <div class="register-benefits anim-fade-up delay-900">
+          <p><small>✨ Registrandoti potrai accedere a contenuti esclusivi, prenotare eventi e molto altro!</small></p>
+        </div>
+        
+      </div>
+    </section>
+  </section>
+
+  <%- include('partials/footer') %>
+  <script src="/js/script.js"></script>
+</body>
+
+</html>

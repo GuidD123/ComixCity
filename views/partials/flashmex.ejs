@@ -1,0 +1,5 @@
+<% if (flashMessage && flashMessage.text) { %>
+  <div class="alert alert-<%= flashMessage.type %>" role="alert" aria-live="polite">
+    <%= flashMessage.text %>
+  </div>
+<% } %>

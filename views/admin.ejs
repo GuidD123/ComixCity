@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - ComixCity</title>
+  <link rel="stylesheet" href="/css/stile.css" />
+</head>
+<body>
+  <%- include('partials/navbarAdmin') %>
+  <%- include('partials/flashmex') %>
+  
+  <section class="background-gradient-admin admin-section">
+    
+    <!-- HERO HEADER COMPATTO -->
+    <div class="admin-hero anim-fade-up">
+      <h1>👑 Pannello Amministratore</h1>
+      <p class="admin-subtitle">Gestisci la tua piattaforma ComixCity</p>
+    </div>
+    
+    <!-- STATISTICHE CARDS MODERNA -->
+    <section class="admin-stats-grid anim-fade-up delay-100">
+      <div class="stat-card stat-primary">
+        <div class="stat-icon">👥</div>
+        <div class="stat-content">
+          <h3>Utenti</h3>
+          <p class="stat-number"><%= stats.utenti %></p>
+          <span class="stat-label">registrati</span>
+        </div>
+      </div>
+      
+      <div class="stat-card stat-success">
+        <div class="stat-icon">🧱</div>
+        <div class="stat-content">
+          <h3>Stand</h3>
+          <p class="stat-number"><%= stats.stand_prenotati %></p>
+          <span class="stat-label">prenotati</span>
+        </div>
+      </div>
+      
+      <div class="stat-card stat-info">
+        <div class="stat-icon">🎫</div>
+        <div class="stat-content">
+          <h3>Eventi</h3>
+          <p class="stat-number"><%= stats.eventi_prenotati %></p>
+          <span class="stat-label">attivi</span>
+        </div>
+      </div>
+      
+      <div class="stat-card stat-warning">
+        <div class="stat-icon">🎟️</div>
+        <div class="stat-content">
+          <h3>Biglietti</h3>
+          <p class="stat-number"><%= stats.biglietti %></p>
+          <span class="stat-label">venduti</span>
+        </div>
+      </div>
+      
+      <div class="stat-card stat-accent">
+        <div class="stat-icon">💰</div>
+        <div class="stat-content">
+          <h3>Incasso</h3>
+          <p class="stat-number">€<%= Number(stats.incasso).toLocaleString('it-IT', { minimumFractionDigits:0, maximumFractionDigits:0 }) %></p>
+          <span class="stat-label">totale</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABELLE CON CONTAINER COMPATTI -->
+    <div class="admin-tables-container">
+      
+      <!-- UTENTI -->
+      <section class="admin-table-compact anim-fade-up delay-200">
+        <div class="table-header">
+          <h2>👥 Utenti Registrati</h2>
+          <span class="badge badge-count"><%= utenti?.length || 0 %></span>
+        </div>
+        <div class="table-wrapper">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Ruolo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (utenti && utenti.length) { %>
+                <% utenti.forEach(u => { %>
+                  <tr>
+                    <td data-label="ID"><span class="id-badge">#<%= u.id %></span></td>
+                    <td data-label="Username"><strong><%= u.username %></strong></td>
+                    <td data-label="Email"><%= u.email %></td>
+                    <td data-label="Ruolo">
+                      <span class="role-badge role-<%= u.ruolo %>"><%= u.ruolo %></span>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="4" class="empty-state">
+                    <span class="empty-icon">📭</span>
+                    <p>Nessun utente trovato</p>
+                  </td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- STAND -->
+      <section class="admin-table-compact anim-fade-up delay-250">
+        <div class="table-header">
+          <h2>🧱 Stand Prenotati</h2>
+          <span class="badge badge-count"><%= stand_prenotati?.length || 0 %></span>
+        </div>
+        <div class="table-wrapper">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Espositore</th>
+                <th>Stand</th>
+                <th>Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (stand_prenotati && stand_prenotati.length) { %>
+                <% stand_prenotati.forEach(p => { %> 
+                  <tr>
+                    <td data-label="ID"><span class="id-badge">#<%= p.id %></span></td>
+                    <td data-label="Espositore"><strong><%= p.espositore %></strong></td> 
+                    <td data-label="Stand"><%= p.stand %></td>
+                    <td data-label="Data"><%= new Date(p.data_prenotazione).toLocaleDateString('it-IT') %></td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="4" class="empty-state">
+                    <span class="empty-icon">📭</span>
+                    <p>Nessuna prenotazione</p>
+                  </td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- EVENTI -->
+      <section class="admin-table-compact anim-fade-up delay-300">
+        <div class="table-header">
+          <h2>🎫 Eventi Prenotati</h2>
+          <span class="badge badge-count"><%= eventi_prenotati?.length || 0 %></span>
+        </div>
+        <div class="table-wrapper">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Utente</th>
+                <th>Evento</th>
+                <th>Data</th>
+                <th>Stato</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (eventi_prenotati && eventi_prenotati.length) { %> 
+                <% eventi_prenotati.forEach(ep => { %>
+                  <tr>
+                    <td data-label="ID"><span class="id-badge">#<%= ep.id %></span></td>
+                    <td data-label="Utente"><strong><%= ep.utente %></strong></td>
+                    <td data-label="Evento"><%= ep.evento %></td>
+                    <td data-label="Data"><%= new Date(ep.data_prenotazione).toLocaleDateString('it-IT') %></td>
+                    <td data-label="Stato">
+                      <span class="status-badge status-<%= ep.stato %>"><%= ep.stato %></span>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="5" class="empty-state">
+                    <span class="empty-icon">📭</span>
+                    <p>Nessun evento prenotato</p>
+                  </td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- BIGLIETTI -->
+      <section class="admin-table-compact anim-fade-up delay-350">
+        <div class="table-header">
+          <h2>🎟️ Biglietti Acquistati</h2>
+          <span class="badge badge-count"><%= acquisti?.length || 0 %></span>
+        </div>
+        <div class="table-wrapper">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Utente</th>
+                <th>Biglietto</th>
+                <th>Qtà</th>
+                <th>Data</th>
+                <th>Totale</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (acquisti && acquisti.length) { %>
+                <% acquisti.forEach(a => { %>
+                  <tr>
+                    <td data-label="ID"><span class="id-badge">#<%= a.id %></span></td>
+                    <td data-label="Utente"><strong><%= a.acquirente %></strong></td>
+                    <td data-label="Biglietto"><%= a.biglietto %></td> 
+                    <td data-label="Quantità"><span class="qty-badge"><%= a.quantita %></span></td> 
+                    <td data-label="Data"><%= new Date(a.data).toLocaleDateString('it-IT') %></td>
+                    <td data-label="Totale">
+                      <strong class="price-highlight">€<%= Number(a.totale).toFixed(2) %></strong>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="6" class="empty-state">
+                    <span class="empty-icon">📭</span>
+                    <p>Nessun acquisto</p>
+                  </td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+
+  </section>
+
+  <%- include('partials/footer') %>
+  <script src="/js/script.js"></script>
+</body>
+</html>

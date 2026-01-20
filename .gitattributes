@@ -1,0 +1,22 @@
+# ==========================
+# GitHub Linguist settings
+# ==========================
+
+# Ignora dipendenze e risorse non rilevanti
+node_modules/* linguist-vendored
+public/vendor/* linguist-vendored
+public/img/* linguist-vendored
+
+# Associa i file EJS a JavaScript
+*.ejs linguist-language=JavaScript
+
+# Forza riconoscimento corretto di CSS e SQL
+*.css linguist-language=CSS
+*.sql linguist-language=SQL
+
+# File HTML standard
+*.html linguist-language=HTML
+
+# Evita che file minificati alterino le statistiche
+*.min.js linguist-vendored
+*.min.css linguist-vendored

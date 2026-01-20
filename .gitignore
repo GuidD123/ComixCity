@@ -1,0 +1,58 @@
+# File di ambiente e segreti
+.env
+.env.local
+.env.production
+
+# Configurazioni locali di VS Code
+*.code-workspace
+
+# Dependencies
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Cache
+.npm
+.cache/
+
+# File temporanei
+temp/
+tmp/
+*.tmp
+
+# File di sistema
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# File IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# File di backup
+*.bak
+*~
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Database locale
+*.db

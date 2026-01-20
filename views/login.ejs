@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - ComixCity</title>
+  <link rel="stylesheet" href="/css/stile.css">
+</head>
+<body>
+  <%- include('partials/navbar1') %>
+  <%- include('partials/flashmex') %>
+
+  <section class="background-gradient">
+  
+    <!-- FORM LOGIN -->
+    <section class="login-main">
+      <div class="login-container">
+        
+        <h2 class="anim-fade-up">Effettua il login</h2>
+        
+        <form action="/login" method="POST" class="login-form">
+          
+          <div class="form-group anim-fade-up delay-200">
+            <label for="email">Email:</label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              required 
+              placeholder="Inserisci la tua email" 
+              value="<%= email || '' %>"
+              autocomplete="email"
+            >
+          </div>
+
+          <div class="form-group anim-fade-up delay-400">
+            <label for="password">Password:</label>
+            <input 
+              type="password" 
+              id="password" 
+              name="password" 
+              required 
+              placeholder="Inserisci la password"
+              autocomplete="current-password"
+            >
+          </div>
+
+          <button type="submit" class="btn anim-fade-up delay-600">
+            Accedi
+          </button>
+        </form>
+
+        <p class="form-link anim-fade-up delay-800">
+          Non hai un account? <a href="/register">Registrati</a>
+        </p>
+        
+      </div>
+    </section>
+
+  </section>
+
+  <%- include('partials/footer') %>
+  <script src="/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrello - ComixCity</title>
+    <link rel="stylesheet" href="/css/stile.css" />
+  </head>
+
+  <body>
+    <%- include('partials/navbar1') %>
+    <%- include('partials/flashmex') %>
+
+    <section class="background-gradient">
+      <!-- HERO CARRELLO -->
+      <section class="hero2 carrello-hero">
+        <div class="hero-content-chisiamo">
+          <h1 class="anim-fade-up">Il Tuo Carrello</h1>
+          <h2 class="anim-fade-up delay-300">
+            Controlla i tuoi biglietti e preparati all'avventura!
+          </h2>
+        </div>
+      </section>
+
+      <!-- SEZIONE CARRELLO -->
+      <section class="carrello-main">
+        <div class="carrello-container anim-fade-up">
+          <h2 class="anim-fade-up">Riepilogo Acquisti</h2>
+
+          <table class="carrello-tabella anim-fade-up delay-200">
+            <thead>
+              <tr>
+                <th>Biglietto</th>
+                <th>Quantità</th>
+                <th>Prezzo</th>
+                <th>Totale</th>
+                <th>Azioni</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (carrello.length===0) { %>
+              <tr>
+                <td colspan="5" class="carrello-vuoto">Il carrello è vuoto.</td>
+              </tr>
+              <% } else { %> <% carrello.forEach((item,index)=> { %>
+              <tr>
+                <td><%= item.nome %></td>
+                <td>
+                  <form
+                    action="/carrello/decrementa/<%= index %>"
+                    method="POST"
+                    class="inline"
+                  >
+                    <button type="submit" class="btn-sm btn-decrementa">
+                      -
+                    </button>
+                  </form>
+                  <span class="quantita"> <%= item.quantita %> </span>
+                  <form
+                    action="/carrello/incrementa/<%= index %>"
+                    method="POST"
+                    class="inline"
+                  >
+                    <button type="submit" class="btn-sm btn-incrementa">
+                      +
+                    </button>
+                  </form>
+                </td>
+                <td>€<%= item.prezzo.toFixed(2) %></td>
+                <td>€<%= (item.quantita * item.prezzo).toFixed(2) %></td>
+                <td>
+                  <form action="/carrello/rimuovi/<%= index %>" method="POST">
+                    <button type="submit" class="btn btn-secondary ml-1">
+                      Rimuovi
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              <% }) %> <% } %>
+            </tbody>
+          </table>
+
+          <div class="carrello-totale anim-fade-up delay-400">
+            <h3>Totale: €<%= Number(totale).toFixed(2) %></h3>
+            <% if (carrello.length> 0) { %>
+            <form
+              id="svuotaCarrelloForm"
+              method="POST"
+              action="/carrello/svuota"
+            >
+              <button
+                id="svuotaCarrelloBtn"
+                class="btn btn-secondary"
+                type="submit"
+              >
+                Svuota carrello
+              </button>
+            </form>
+
+            <form method="POST" action="/carrello/checkout">
+              <button class="btn btn-checkout">Procedi al Pagamento</button>
+            </form>
+            <% } else { %>
+            <a class="btn btn-checkout disabled-link">Procedi al Pagamento</a>
+            <% } %>
+          </div>
+          <a href="/biglietti" class="btn-carrello btn-secondary-carrello anim-fade-up delay-500">Continua a scegliere biglietti</a>
+        </div>
+      </section>
+    </section>
+
+    <%- include('partials/footer') %>
+
+    <script src="/js/script.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const checkoutForm = document.querySelector(
+          'form[action="/carrello/checkout"]'
+        );
+        if (checkoutForm) {
+          checkoutForm.addEventListener("submit", function (e) {
+            const btn = checkoutForm.querySelector("button[type=submit]");
+            if (btn) {
+              btn.disabled = true;
+              btn.innerText = "Attendi...";
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

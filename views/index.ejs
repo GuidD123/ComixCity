@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ComixCity</title>
+  <!--CSS-->
+  <link rel="stylesheet" href="/css/stile.css">
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+</head>
+
+<body>
+
+  <%- include('partials/navbar') %>
+  <%- include('partials/flashmex') %>
+
+    <div id="scroll-progress"></div>
+    
+        <!-- HEADER HERO -->
+        <section class="hero">
+          <div class="swiper mySwiper">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide">
+                <img src="/img/3.jpg" alt="Slide 1" loading="lazy">
+              </div>
+              <div class="swiper-slide">
+                <img src="/img/2.jpg" alt="Slide 2" loading="lazy">
+              </div>
+              <div class="swiper-slide">
+                <img src="/img/mangas.jpg" alt="Slide 3" style="object-position: top center;" loading="lazy">
+              </div>
+              <div class="swiper-slide">
+                <img src="/img/4.jpg" alt="Slide 4" loading="lazy">
+              </div>
+              <div class="swiper-slide">
+                <img src="/img/5.jpg" alt="Slide 5" loading="lazy">
+              </div>
+              <div class="swiper-slide">
+                <img src="/img/6.jpg" alt="Slide 6" loading="lazy">
+              </div>
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+          </div>
+
+
+          <!--BLOCCHI SU HERO-->
+          <div class="hero-content animate-hero">
+            <!-- Blocco principale: visitatori -->
+            <div class="hero-blocco-benvenuto anim-slide-right delay-100">
+              <h1>Benvenuto a ComixCity!</h1>
+              <p>Scopri il mondo dei fumetti, giochi e cosplay. Sfoglia gli eventi e acquista il tuo biglietto!</p>
+              <div class="hero-buttons">
+                <a href="#eventi" class="btn">Scopri Eventi</a>
+                <a href="#biglietti" class="btn-secondary">Acquista Biglietti</a>
+              </div>
+            </div>
+
+            <!-- Blocco espositori -->
+            <div class="hero-blocco-espositore anim-slide-left delay-200">
+              <h2>Sei un espositore? Scopri i posti disponibili!</h2>
+              <p>Tramite l'apposita sezione potrai scegliere la tua area ed esporre la tua merce!</p>
+              <div class="hero-buttons">
+                <a href="#stand" class="btn-tertiary">Vai agli Stand</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!--///////////////////////////SEZIONI SUBHERO/////////////////////-->
+        <section class="background-gradient-index">
+
+          <!--///////////////////////////BIGLIETTI/////////////////////-->
+
+          <section id="biglietti" class="preview-section anim-fade-up">
+            <div class="preview-container anim-fade-up">
+              <h2>I Nostri Biglietti!</h2>
+              <div class="preview-grid">
+
+                <div class="evento-card1 evento-bg1 anim-slide-right delay-0"
+                  style="background-image: url('/img/TickInt.jpg');">
+                </div>
+
+                <div class="evento-card1 evento-bg1 anim-slide-right delay-100"
+                  style="background-image: url('/img/RidCos.jpg');">
+                </div>
+
+                <div class="evento-card1 evento-bg1 anim-slide-left delay-300"
+                  style="background-image: url('/img/GratBamb.jpg');">
+                </div>
+
+                <div class="evento-card1 evento-bg1 anim-slide-left delay-400"
+                  style="background-image: url('/img/GratDisab.jpg');">
+                </div>
+              </div>
+
+              <div class="evento-bottone">
+                <a href="/biglietti" class="btn-secondary">Scopri di più</a>
+              </div>
+          </section>
+
+
+          <!--///////////////SEZIONE EVENTI//////////////-->
+          <section id="eventi" class="sezione-eventi anim-fade-up">
+            <h2>Scopri gli Eventi</h2>
+            <div class="eventi-grid">
+
+              <div class="evento-card anim-slide-right delay-0">
+                <img src="/img/gaming.jpg" alt="Gaming Arena">
+                <div class="evento-info">
+                  <h3>Gaming Arena</h3>
+                  <p>Tornei su console e PC, sfide epiche e premi esclusivi!</p>
+                </div>
+              </div>
+
+
+              <div class="evento-card anim-slide-right delay-100">
+                <img src="/img/jjk.jpg" alt="Cosplay Contest">
+                <div class="evento-info">
+                  <h3>Cosplay Contest</h3>
+                  <p>La grande sfilata dei migliori cosplayer con premi in palio!</p>
+                </div>
+              </div>
+
+
+              <div class="evento-card anim-slide-left delay-200">
+                <img src="/img/isoka.jpg" alt="Workshop Fumetto">
+                <div class="evento-info">
+                  <h3>Workshop Fumetto</h3>
+                  <p>Scopri i segreti del disegno manga e comics con i grandi autori!</p>
+                </div>
+              </div>
+
+              <div class="evento-card anim-slide-left delay-300">
+                <img src="/img/Celeb.jpg" alt="Incontri Speciali">
+                <div class="evento-info">
+                  <h3>Incontri Speciali</h3>
+                  <p>Ospiti famosi del mondo comics & games per incontri esclusivi!</p>
+                </div>
+              </div>
+
+            </div>
+            <div class="btn-wrapper">
+              <a href="/eventi" class="btn-secondary">Vedi tutti gli eventi</a>
+            </div>
+
+          </section>
+
+
+          <!--//////////////////SEZIONE STAND////////////////////////////-->
+          <section id="stand" class="sezione-stand anim-fade-up">
+            <h2>Esponi a ComixCity!</h2>
+            <div class="stand-grid">
+
+              <div class="stand-card-index anim-slide-right delay-0">
+                <img src="/img/standCard2.jpg" alt="Prenota uno Stand">
+                <h3>Prenota il tuo Spazio</h3>
+                <p>Affitta il tuo stand e incontra migliaia di appassionati!</p>
+                <a href="/stand" class="btn-secondary">Prenota ora</a>
+              </div>
+
+              <div class="stand-card-index anim-slide-left delay-100">
+                <img src="/img/standCard1.jpg" alt="Informazioni Espositori">
+                <h3>Info e Regolamento</h3>
+                <p>Leggi il regolamento espositori e consulta tutte le linee guida ufficiali.</p>
+                <a href="/stand/info_regolamento" class="btn-secondary">Scopri di più</a>
+              </div>
+
+            </div>
+          </section>
+
+
+          <!--///////////////SEZIONE FAQ//////////////-->
+          <section class="faq-section">
+            <div class="faq-container anim-fade-up">
+              <h2>Domande Frequenti</h2>
+
+              <div class="faq-grid">
+
+                <div class="faq-item anim-slide-right delay-0">
+                  <h3>Dove posso acquistare i biglietti?</h3>
+                  <p>Puoi acquistare i biglietti online sul nostro sito nella sezione <a
+                      href="/biglietti">Biglietti</a>.
+                  </p>
+                </div>
+
+                <div class="faq-item anim-slide-left delay-100">
+                  <h3>Come posso prenotare uno stand?</h3>
+                  <p>Visita la sezione <a href="/stand">Espositori</a> e segui le istruzioni per prenotare il tuo spazio
+                    in
+                    fiera</p>
+                </div>
+
+                <div class="faq-item anim-slide-right delay-200">
+                  <h3>Serve iscriversi per partecipare al Cosplay Contest?</h3>
+                  <p>No, basta presentarsi in costume il giorno dell'evento e registrarsi all'Info Point con i dati del
+                    personaggio ricreato</p>
+                </div>
+
+                <div class="faq-item anim-slide-left delay-300">
+                  <h3>Dove trovo il programma completo degli eventi?</h3>
+                  <p>Il programma è disponibile nella sezione <a href="/eventi">Eventi</a> del sito</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </section>
+
+
+        <!--FOOTER-->
+        <%- include('partials/footer') %>
+
+          <button id="scrollTopBtn" title="Torna su">↑</button>
+
+          <!-- Swiper JS -->
+          <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+
+          <!--Script.js-->
+          <script src="/js/script.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Area Personale - ComixCity</title>
+    <link rel="stylesheet" href="/css/stile.css" />
+  </head>
+  <body>
+    <%- include('partials/navbarAdmin') %> <%- include('partials/flashmex') %>
+
+    <section class="background-gradient-admin admin-section">
+      <!-- HERO HEADER COMPATTO -->
+      <div class="admin-hero anim-fade-up">
+        <h1>Area Personale</h1>
+        <p class="admin-subtitle">
+          Benvenuto, <strong><%= user.username %></strong>!
+        </p>
+        <p class="admin-subtitle-small">
+          Ruolo:
+          <span class="role-badge role-<%= user.ruolo %>"
+            ><%= user.ruolo %></span
+          >
+        </p>
+      </div>
+
+      <!-- STATISTICHE PERSONALI -->
+      <section class="admin-stats-grid anim-fade-up delay-100">
+        <% if (user.ruolo === 'utente') { %>
+        <div class="stat-card stat-info">
+          <div class="stat-icon">🎟️</div>
+          <div class="stat-content">
+            <h3>Biglietti</h3>
+            <p class="stat-number"><%= biglietti?.length || 0 %></p>
+            <span class="stat-label">acquistati</span>
+          </div>
+        </div>
+        <% } %> <% if (user.ruolo === 'espositore') { %>
+        <div class="stat-card stat-success">
+          <div class="stat-icon">🧱</div>
+          <div class="stat-content">
+            <h3>Stand</h3>
+            <p class="stat-number"><%= stand?.length || 0 %></p>
+            <span class="stat-label">prenotati</span>
+          </div>
+        </div>
+        <% } %>
+
+        <div class="stat-card stat-primary">
+          <div class="stat-icon">🎫</div>
+          <div class="stat-content">
+            <h3>Eventi</h3>
+            <p class="stat-number"><%= eventiPrenotati?.length || 0 %></p>
+            <span class="stat-label">prenotati</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- TABELLE CON CONTAINER COMPATTI -->
+      <div class="admin-tables-container">
+        <!-- EVENTI PRENOTATI -->
+        <section class="admin-table-compact anim-fade-up delay-200">
+          <div class="table-header">
+            <h2>🎫 Eventi Prenotati</h2>
+            <span class="badge badge-count"
+              ><%= eventiPrenotati?.length || 0 %></span
+            >
+          </div>
+          <div class="table-wrapper">
+            <table class="modern-table">
+              <thead>
+                <tr>
+                  <th>Evento</th>
+                  <th>Data</th>
+                  <th>Partecipazione</th>
+                  <th>Prenotato il</th>
+                  <th>Stato</th>
+                  <th>Azioni</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (eventiPrenotati && eventiPrenotati.length > 0) { %> <%
+                eventiPrenotati.forEach(evento => { %>
+                <tr>
+                  <td data-label="Evento">
+                    <strong><%= evento.titolo %></strong>
+                    <% if (evento.descrizione) { %>
+                    <br /><small style="color: #666"
+                      ><%= evento.descrizione.substring(0, 60) %>...</small
+                    >
+                    <% } %>
+                  </td>
+                  <td data-label="Data">
+                    <%= new Date(evento.data).toLocaleDateString('it-IT') %>
+                  </td>
+                  <td data-label="Partecipazione">
+                    <%= evento.tipo_partecipazione || 'Partecipante' %>
+                  </td>
+                  <td data-label="Prenotato il">
+                    <%= new
+                    Date(evento.data_prenotazione).toLocaleDateString('it-IT')
+                    %>
+                  </td>
+                  <td data-label="Stato">
+                    <span class="status-badge status-<%= evento.stato %>"
+                      ><%= evento.stato %></span
+                    >
+                  </td>
+                  <td data-label="Azioni">
+                    <% if (evento.stato === 'attiva') { %>
+                    <form
+                      method="POST"
+                      action="/eventi/<%= evento.evento_id %>/annulla"
+                      style="display: inline"
+                    >
+                      <button
+                        type="submit"
+                        class="btn-sm btn-danger"
+                        onclick="return confirm('Sicuro di voler annullare la prenotazione?')"
+                      >
+                        Annulla
+                      </button>
+                    </form>
+                    <% } else { %>
+                    <span style="color: #999">-</span>
+                    <% } %>
+                  </td>
+                </tr>
+                <% }) %> <% } else { %>
+                <tr>
+                  <td colspan="6" class="empty-state">
+                    <span class="empty-icon">📭</span>
+                    <p>Non hai ancora prenotato eventi</p>
+                    <a href="/eventi" class="btn-sm" style="margin-top: 0.5rem"
+                      >Scopri gli eventi</a
+                    >
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <% if (user.ruolo === 'utente') { %>
+        <!-- BIGLIETTI ACQUISTATI -->
+        <section class="admin-table-compact anim-fade-up delay-250">
+          <div class="table-header">
+            <h2>🎟️ I tuoi Biglietti</h2>
+            <span class="badge badge-count"><%= biglietti?.length || 0 %></span>
+          </div>
+          <div class="table-wrapper">
+            <table class="modern-table">
+              <thead>
+                <tr>
+                  <th>Ordine</th>
+                  <th>Tipo Biglietto</th>
+                  <th>Quantità</th>
+                  <th>Prezzo Unit.</th>
+                  <th>Totale</th>
+                  <th>Data Acquisto</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (biglietti && biglietti.length > 0) { %> <%
+                biglietti.forEach(b => { %>
+                <tr>
+                  <td data-label="Ordine">
+                    <span class="id-badge">#<%= b.id %></span>
+                  </td>
+                  <td data-label="Tipo Biglietto">
+                    <strong><%= b.tipo_biglietto %></strong>
+                  </td>
+                  <td data-label="Quantità">
+                    <span class="qty-badge"><%= b.quantita %></span>
+                  </td>
+                  <td data-label="Prezzo Unit.">
+                    €<%= Number(b.prezzo_unitario).toFixed(2) %>
+                  </td>
+                  <td data-label="Totale">
+                    <strong class="price-highlight"
+                      >€<%= (b.quantita * b.prezzo_unitario).toFixed(2)
+                      %></strong
+                    >
+                  </td>
+                  <td data-label="Data Acquisto">
+                    <%= new Date(b.data_acquisto).toLocaleDateString('it-IT') %>
+                  </td>
+                </tr>
+                <% }) %> <% } else { %>
+                <tr>
+                  <td colspan="6" class="empty-state">
+                    <span class="empty-icon">📭</span>
+                    <p>Non hai ancora acquistato biglietti</p>
+                    <a
+                      href="/biglietti"
+                      class="btn-sm"
+                      style="margin-top: 0.5rem"
+                      >Acquista biglietti</a
+                    >
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <% } %> <% if (user.ruolo === 'espositore') { %>
+        <!-- STAND PRENOTATI -->
+        <section class="admin-table-compact anim-fade-up delay-250">
+          <div class="table-header">
+            <h2>🧱 Stand Prenotati</h2>
+            <span class="badge badge-count"><%= stand?.length || 0 %></span>
+          </div>
+          <div class="table-wrapper">
+            <table class="modern-table">
+              <thead>
+                <tr>
+                  <th>ID Stand</th>
+                  <th>Nome</th>
+                  <th>Padiglione</th>
+                  <th>Posizione</th>
+                  <th>Tema</th>
+                  <th>Dimensione</th>
+                  <th>Capienza</th>
+                  <th>Servizi Inclusi</th>
+                  <th>Data Prenotazione</th>
+                  <th>Azioni</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (stand && stand.length > 0) { %> <% stand.forEach(s => {
+                %>
+                <tr>
+                  <td data-label="ID Stand">
+                    <span class="id-badge">#<%= s.id %></span>
+                  </td>
+                  <td data-label="Nome"><strong><%= s.nome %></strong></td>
+                  <td data-label="Padiglione"><%= s.padiglione %></td>
+                  <td data-label="Posizione"><%= s.posizione %></td>
+                  <td data-label="Tema"><%= s.tema || '-' %></td>
+                  <td data-label="Dimensione"><%= s.dimensione || '-' %></td>
+                  <td data-label="Capienza"><%= s.capienza ?? '-' %></td>
+                  <td data-label="Servizi"><%= s.servizi_inclusi || '-' %></td>
+                  <td data-label="Data Prenotazione">
+                    <%= new
+                    Date(s.data_prenotazione).toLocaleDateString('it-IT') %>
+                  </td>
+                  <td data-label="Azioni">
+                    <form
+                      action="/stand/annulla"
+                      method="POST"
+                      style="display: inline"
+                    >
+                      <input type="hidden" name="standId" value="<%= s.id %>" />
+                      <button
+                        type="submit"
+                        class="btn-sm btn-danger"
+                        onclick="return confirm('Sicuro di voler annullare la prenotazione dello stand?')"
+                      >
+                        Annulla
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                <% }) %> <% } else { %>
+                <tr>
+                  <td colspan="10" class="empty-state">
+                    <span class="empty-icon">📭</span>
+                    <p>Non hai ancora prenotato stand</p>
+                    <a href="/stand" class="btn-sm" style="margin-top: 0.5rem"
+                      >Prenota uno stand</a
+                    >
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <% } %>
+
+        <!-- MODIFICA PROFILO -->
+        <section class="admin-table-compact anim-fade-up delay-300">
+          <div class="table-header">
+            <h2>✏️ Modifica Profilo</h2>
+          </div>
+          <div
+            style="
+              padding: 2rem;
+              background: white;
+              border-radius: 0 0 1rem 1rem;
+            "
+          >
+            <form
+              action="/areapersonale/modifica"
+              method="POST"
+              class="register-form"
+            >
+              <label for="username">Nuovo username</label>
+              <input
+                type="text"
+                name="username"
+                id="username"
+                value="<%= user.username %>"
+                required
+                pattern="[a-zA-Z0-9_]{3,30}"
+                title="Solo lettere, numeri e underscore, 3-30 caratteri, no spazi"
+                placeholder="Es: mario_rossi123"
+                autocomplete="username"
+              />
+              <small class="input-tip">
+                Solo lettere, numeri e underscore (_), da 3 a 30 caratteri.
+              </small>
+
+              <label for="email">Nuova email</label>
+              <input
+                type="email"
+                name="email"
+                id="email"
+                value="<%= user.email %>"
+                required
+                autocomplete="email"
+              />
+
+              <button type="submit" class="btn">Salva modifiche</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- CAMBIA PASSWORD -->
+        <section class="admin-table-compact anim-fade-up delay-350">
+          <div class="table-header">
+            <h2>🔐 Cambia Password</h2>
+          </div>
+          <div
+            style="
+              padding: 2rem;
+              background: white;
+              border-radius: 0 0 1rem 1rem;
+            "
+          >
+            <form
+              action="/areapersonale/cambia-password"
+              method="POST"
+              class="register-form"
+            >
+              <label for="passwordAttuale">Password attuale</label>
+              <input
+                type="password"
+                name="passwordAttuale"
+                id="passwordAttuale"
+                required
+                autocomplete="current-password"
+              />
+
+              <label for="nuovaPassword">Nuova password</label>
+              <input
+                type="password"
+                name="nuovaPassword"
+                id="nuovaPassword"
+                required
+                minlength="8"
+                autocomplete="new-password"
+              />
+
+              <label for="confermaPassword">Conferma nuova password</label>
+              <input
+                type="password"
+                name="confermaPassword"
+                id="confermaPassword"
+                required
+                autocomplete="new-password"
+              />
+
+              <button type="submit" class="btn">Cambia password</button>
+            </form>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <%- include('partials/footer') %>
+    <script src="/js/script.js"></script>
+  </body>
+</html>

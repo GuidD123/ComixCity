@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Biglietti - ComixCity</title>
+    <link rel="stylesheet" href="/css/stile.css" />
+  </head>
+
+  <body>
+    <%- include('partials/navbar1') %>
+   <%- include('partials/flashmex') %>
+
+    <section class="background-gradient-biglietti">
+      <!-- HERO BIGLIETTI -->
+      <section class="biglietti-hero">
+        <div class="hero-content-chisiamo">
+          <h1 class="anim-fade-up">Biglietti</h1>
+          <p class="anim-fade-up delay-300">
+            Entra nel mondo di ComixCity. Scegli il tuo biglietto!
+          </p>
+        </div>
+      </section>
+
+      <!-- CONTENUTO BIGLIETTI DINAMICO -->
+      <section class="biglietti-main">
+        <div class="biglietti-container">
+          <% if (biglietti && biglietti.length > 0) { %>
+            <div class="biglietti-wrapper">
+              <% biglietti.forEach((biglietto, index) => { %>
+                <div
+                  class="biglietto-full-card anim-slide-<%= index % 2 === 0 ? 'right' : 'left' %> delay-<%= index * 50 %>"
+                  data-biglietto-id="<%= biglietto.id %>"
+                  data-id="<%= biglietto.id %>"
+                >
+                  <div class="card-content">
+                    <!--Sezione Titoli-->
+                    <h3>
+                      <% if (biglietto.nome.includes('Cosplayer')) { %>
+                        <%= biglietto.nome %>
+                      <% } else if (biglietto.nome.includes('Under') || biglietto.nome.includes('Bambino')) { %>
+                        <%= biglietto.nome %>
+                      <% } else if (biglietto.nome.includes('Disabili')) { %>
+                        <%= biglietto.nome %>
+                      <% } else { %>
+                        <%= biglietto.nome %>
+                      <% } %>
+                    </h3>
+                    <hr class="ticket-divider" />
+
+                    <p class="prezzo">
+                      <% if (biglietto.prezzo == 0) { %>
+                        <span class="price-free">Gratuito</span>
+                      <% } else { %>
+                        €<%= Number(biglietto.prezzo).toFixed(2) %>
+                      <% } %>
+                    </p>
+
+                    <% if (biglietto.descrizione) { %>
+                      <p><%= biglietto.descrizione %></p>
+                    <% } else { %>
+                      <p>Accesso completo alla fiera per la categoria <%= biglietto.nome %>.</p>
+                    <% } %>
+
+                    <!-- Caratteristiche dinamiche basate sul tipo -->
+                    <ul class="caratteristiche">
+                      <li>Accesso a tutte le aree della fiera</li>
+                      <% if (biglietto.nome.includes('Cosplayer')) { %>
+                        <li>Accesso anticipato area cosplay</li>
+                        <li>Partecipazione a contest</li>
+                        <li>Controllo costume all'ingresso</li>
+                      <% } else if (biglietto.nome.includes('Under') || biglietto.nome.includes('Bambino')) { %>
+                        <li>Eventi family-friendly</li>
+                        <li>Documento obbligatorio all'ingresso</li>
+                      <% } else if (biglietto.nome.includes('Disabili')) { %>
+                        <li>Accesso prioritario</li>
+                        <li>Area relax riservata</li>
+                        <li>Certificazione richiesta</li>
+                      <% } else { %>
+                        <li>Eventi live, palchi, panel</li>
+                        <li>Kit gadget all'ingresso</li>
+                      <% } %>
+                    </ul>
+
+                    <div class="biglietto-info">
+                      <% if (biglietto.tipo_biglietto) { %>
+                        <p>
+                          <strong>Categoria:</strong>
+                          <%= biglietto.tipo_biglietto %>
+                        </p>
+                      <% } %>
+                    </div>
+
+                    <p class="note">
+                      <% if (biglietto.nome.includes('Studente')) { %>
+                        Offerta valida solo per studenti con tessera valida.
+                      <% } else if (biglietto.nome.includes('Under') || biglietto.nome.includes('Bambino')) { %>
+                        Valido solo per minori accompagnati da un adulto.
+                      <% } else if (biglietto.nome.includes('Disabili')) { %>
+                        Riservato a persone con disabilità certificata.
+                      <% } else { %>
+                        Non rimborsabile. Valido solo per il giorno selezionato.
+                      <% } %>
+                    </p>
+                  </div>
+
+                  <!-- FORM ACQUISTO -->
+                  <% if (biglietto.disponibili > 0) { %>
+                    <form
+                      class="form-aggiungi-carrello"
+                      data-ajax="true"
+                      data-biglietto-id="<%= biglietto.id %>"
+                    >
+                      <input type="hidden" name="id" value="<%= biglietto.id %>" />
+                      <input type="hidden" name="prezzo" value="<%= biglietto.prezzo %>" />
+
+                      <!-- Controlli quantità -->
+                      <div class="quantity-controls">
+                        <button
+                          type="button"
+                          class="btn-quantity btn-decrementa"
+                          onclick="decrementQuantity('<%= biglietto.id %>')"
+                          aria-label="Diminuisci quantità"
+                          title="Diminuisci quantità"
+                        >
+                          −
+                        </button>
+
+                        <div class="quantity-display">
+                          <input
+                            type="number"
+                            id="qty-<%= biglietto.id %>"
+                            name="quantita"
+                            value="1"
+                            min="1"
+                            max="5"
+                            readonly
+                            aria-label="Quantità biglietti"
+                          />
+                          <small class="quantity-hint">Max 5</small>
+                        </div>
+
+                        <button
+                          type="button"
+                          class="btn-quantity btn-incrementa"
+                          onclick="incrementQuantity('<%= biglietto.id %>')"
+                          aria-label="Aumenta quantità"
+                          title="Aumenta quantità"
+                        >
+                          +
+                        </button>
+                      </div>
+
+                      <!-- Prezzo totale dinamico -->
+                      <div class="total-preview">
+                        <span id="total-<%= biglietto.id %>">
+                          Totale: €<%= Number(biglietto.prezzo).toFixed(2) %>
+                        </span>
+                      </div>
+
+                      <button
+                        type="submit"
+                        class="btn btn-add-cart"
+                        aria-label="Aggiungi <%= biglietto.nome %> al carrello"
+                      >
+                        Aggiungi al carrello
+                      </button>
+                    </form>
+
+                    <!-- Area feedback specifica per questo biglietto -->
+                    <div class="feedback-msg" aria-live="polite"></div>
+
+                  <% } else { %>
+                    <div class="sold-out">
+                      <button class="btn btn-disabled" disabled>Esaurito</button>
+                      <p class="sold-out-message">
+                        Questo biglietto è temporaneamente non disponibile
+                      </p>
+                    </div>
+                  <% } %>
+                </div>
+              <% }) %>
+            </div>
+          <% } else { %>
+            <div class="no-biglietti">
+              <h3>Nessun biglietto disponibile</h3>
+              <p class="no-biglietti-message">
+                I biglietti saranno presto in vendita!
+              </p>
+              <p class="no-biglietti-hint">
+                Torna a visitare questa pagina per gli aggiornamenti.
+              </p>
+              <% if (user && user.ruolo === 'admin') { %>
+                <div class="admin-notice">
+                  <p>
+                    <strong>Pannello Admin:</strong> Puoi aggiungere biglietti
+                    dal pannello di gestione.
+                  </p>
+                </div>
+              <% } %>
+            </div>
+          <% } %>
+
+          <!-- LINK AL CARRELLO SEMPLICE -->
+          <% if (carrello && carrello.length > 0) { %>
+            <div class="cart-link-section">
+              <p>
+                Hai <strong> <%= cartCount %> biglietti </strong> nel carrello
+              </p>
+              <a href="/carrello" class="btn">Vai al Carrello</a>
+            </div>
+          <% } %>
+        </div>
+      </section>
+    </section>
+
+    <%- include('partials/footer') %>
+
+    <!-- Script JavaScript -->
+    <script src="/js/script.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Gestione evidenziazione da ricerca
+        const urlParams = new URLSearchParams(window.location.search);
+        const highlightId = urlParams.get("highlight");
+        const searchTerm = urlParams.get("search");
+
+        if (highlightId) {
+          // Cerca l'elemento da evidenziare
+          const targetElement =
+            document.querySelector(`[data-id="${highlightId}"]`) ||
+            document.querySelector(`#item-${highlightId}`) ||
+            document.querySelector(`#biglietto-${highlightId}`) ||
+            document.querySelector(`#evento-${highlightId}`) ||
+            document.querySelector(`#stand-${highlightId}`);
+
+          if (targetElement) {
+            // Evidenzia l'elemento
+            targetElement.classList.add("search-highlighted");
+
+            // Scroll verso l'elemento
+            setTimeout(() => {
+              targetElement.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+              });
+            }, 500);
+
+            // Rimuovi evidenziazione dopo 5 secondi
+            setTimeout(() => {
+              targetElement.classList.remove("search-highlighted");
+            }, 5000);
+          }
+
+          if (searchTerm) {
+            const searchMessage = document.createElement("div");
+            searchMessage.className = "search-result-message";
+            searchMessage.innerHTML = `
+              <div class="alert alert-info">
+                Risultato per: "<strong>${searchTerm}</strong>"
+                <button onclick="this.parentElement.remove()" style="float: right; background: none; border: none; font-size: 1.2rem;">&times;</button>
+              </div>
+            `;
+            document.body.insertBefore(searchMessage, document.body.firstChild);
+
+            setTimeout(() => {
+              if (searchMessage.parentElement) {
+                searchMessage.remove();
+              }
+            }, 5000);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

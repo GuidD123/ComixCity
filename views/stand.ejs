@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stand Espositivi - ComixCity</title>
+    <link rel="stylesheet" href="/css/stile.css" />
+  </head>
+
+  <body>
+    <%- include('partials/navbar1') %> 
+    <%- include('partials/flashmex') %>
+
+    <section class="background-gradient-stand">
+      <!-- HERO STAND-->
+      <section class="hero3 stand-hero">
+        <div class="hero-content-stand">
+          <h1 class="anim-fade-down">I Nostri Stand</h1>
+          <p class="anim-fade-down delay-300">
+            Prenota il tuo spazio espositivo e presenta i tuoi prodotti e
+            creazioni a migliaia di appassionati!
+          </p>
+        </div>
+      </section>
+
+      <section class="stand-main">
+        <div class="stand-container">
+          <% if (stand && stand.length > 0) { %>
+          <div class="stand-grid anim-fade-up delay-200">
+            <% stand.forEach((s, index) => { 
+              const postiDisponibili = s.posti_disponibili || 0;
+              const postiOccupati = s.posti_occupati || 0;
+              const postiTotali = s.posti_totali || 5;
+              const percentualeOccupata = Math.round((postiOccupati / postiTotali) * 100);
+              const isDisponibile = postiDisponibili > 0;
+              const hoPrenotatoQuestoStand = mieiStand && mieiStand.includes(s.id);
+              
+              // Badge in base a disponibilità
+              let badgeClass = 'available';
+              let badgeText = 'Disponibile';
+              let badgeIcon = '🟢';
+              
+              if (postiDisponibili === 0) {
+                badgeClass = 'unavailable';
+                badgeText = 'Completo';
+                badgeIcon = '🔴';
+              } else if (postiDisponibili <= 2) {
+                badgeClass = 'low-availability';
+                badgeText = 'Ultimi Posti';
+                badgeIcon = '🟡';
+              }
+            %>
+            <div class="stand-card anim-slide-<%= index % 2 === 0 ? 'right' : 'left' %> delay-<%= index * 100 %>" data-id="<%= s.id %>">
+              
+              <div class="stand-header">
+                <h3><%= s.nome %></h3>
+                <span class="stand-status <%= badgeClass %>">
+                  <%= badgeIcon %> <%= badgeText %>
+                </span>
+              </div>
+
+              <!-- BARRA OCCUPAZIONE -->
+              <div class="stand-occupazione">
+                <div class="occupazione-info">
+                  <span class="occupazione-label">
+                    <strong><%= postiOccupati %></strong>/<%= postiTotali %> posti occupati
+                  </span>
+                </div>
+                <div class="occupazione-bar">
+                  <div class="occupazione-fill" style="width: <%= percentualeOccupata %>%;"></div>
+                </div>
+              </div>
+
+              <div class="stand-details">
+                <% if (s.padiglione) { %>
+                <p ><strong>Padiglione</strong> <%= s.padiglione %></p>
+                <% } %> 
+                
+                <% if (s.posizione) { %>
+                <p ><strong>Posizione</strong> <%= s.posizione %></p>
+                <% } %> 
+                
+                <% if (s.tema) { %>
+                <p ><strong>Tema</strong> <%= s.tema %></p>
+                <% } %> 
+                
+                <% if (s.dimensione) { %>
+                <p ><strong>Dimensione</strong> <%= s.dimensione %></p>
+                <% } %> 
+                
+                <% if (s.servizi_inclusi) { %>
+                <p ><strong>Servizi</strong> <%= s.servizi_inclusi %></p>
+                <% } %> 
+                
+                <% if (s.note) { %>
+                <p ><strong>Note</strong> <%= s.note %></p>
+                <% } %>
+                
+                <% if (s.espositori && postiOccupati > 0) { %>
+                <p  style="grid-column: span 2;">
+                  <strong>Espositori</strong> <%= s.espositori %>
+                </p>
+                <% } %>
+              </div>
+
+              <div class="stand-actions">
+                <% if (!isDisponibile) { %>
+                  <div class="btn-secondary disabled-link">
+                    🔴 Stand Completo
+                  </div>
+                  <small class="helper-text">
+                    Tutti i <%= postiTotali %> posti sono prenotati
+                  </small>
+                  
+                <% } else if (!user) { %>
+                  <a href="/login?redirectTo=/stand" class="btn-secondary">
+                    🔐 Accedi per Prenotare
+                  </a>
+                  
+                <% } else if (user.ruolo === 'utente') { %>
+                  <div class="btn-secondary disabled-link">
+                    ⚠️ Solo per Espositori
+                  </div>
+                  <small class="helper-text">
+                    Registrati come espositore
+                  </small>
+                  
+                <% } else if (hoPrenotatoQuestoStand) { %>
+                  <div class="btn disabled-link">
+                    ✓ Hai già un posto qui
+                  </div>
+                  <small class="helper-text">
+                    Vai all'<a href="/areapersonale">Area Personale</a>
+                  </small>
+                  
+                <% } else if (user.ruolo === 'espositore' || user.ruolo === 'admin') { %>
+                  <button class="btn" onclick="prenotaStand('<%= s.id %>', '<%= s.nome %>', <%= postiDisponibili %>)">
+                    🏪 Prenota (<%= postiDisponibili %> <%= postiDisponibili === 1 ? 'libero' : 'liberi' %>)
+                  </button>
+                  
+                  <% if (postiDisponibili <= 2) { %>
+                  <small class="helper-text urgente">
+                    ⚡ Ultimi posti!
+                  </small>
+                  <% } %>
+                <% } %>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+          <% } else { %>
+          <div class="no-stand anim-fade-up">
+            <h3>🏪 Nessuno stand disponibile</h3>
+            <p>Tutti gli stand sono al completo. Riprova più tardi!</p>
+          </div>
+          <% } %> 
+          
+          <% if (user && (user.ruolo === 'espositore' || user.ruolo === 'admin')) { %>
+          <form id="prenotazioneForm" action="/stand/prenota" method="POST" style="display: none">
+            <input type="hidden" id="standIdHidden" name="standId" />
+          </form>
+          <% } %>
+        </div>
+      </section>
+
+      <section class="stand-info-section">
+        <div class="stand-container anim-fade-up delay-400">
+          <h2>Perché Esporre a ComixCity?</h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-icon">👥</div>
+              <h4>Visibilità Massima</h4>
+              <p>Raggiungi migliaia di appassionati di fumetti, games e cultura pop</p>
+            </div>
+            <div class="info-item">
+              <div class="info-icon">🏢</div>
+              <h4>Area Attrezzata</h4>
+              <p>Spazi professionali con allestimenti e supporto tecnico</p>
+            </div>
+            <div class="info-item">
+              <div class="info-icon">🤝</div>
+              <h4>Supporto Completo</h4>
+              <p>Assistenza logistica e promozionale</p>
+            </div>
+            <div class="info-item">
+              <div class="info-icon">💰</div>
+              <h4>Opportunità di Vendita</h4>
+              <p>Vendi direttamente ai tuoi clienti target</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <%- include('partials/footer') %>
+    <script src="/js/script.js"></script>
+
+    <script>
+      const user = <%- user ? JSON.stringify(user) : 'null' %>;
+      
+      function prenotaStand(standId, standNome, postiRimasti) {
+        if (!user || (user.ruolo !== "espositore" && user.ruolo !== "admin")) {
+          alert("Non hai i permessi per prenotare stand.");
+          return;
+        }
+        
+        const msg = postiRimasti <= 2 
+          ? `Confermi la prenotazione dello stand "${standNome}"?\n\n⚡ Attenzione: solo ${postiRimasti} ${postiRimasti === 1 ? 'posto rimasto' : 'posti rimasti'}!`
+          : `Confermi la prenotazione di un posto nello stand "${standNome}"?`;
+        
+        if (confirm(msg)) {
+          document.getElementById("standIdHidden").value = standId;
+          document.getElementById("prenotazioneForm").submit();
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const alerts = document.querySelectorAll(".alert");
+        alerts.forEach(alert => {
+          setTimeout(() => {
+            alert.style.opacity = "0";
+            setTimeout(() => alert.remove(), 300);
+          }, 5000);
+        });
+      });
+    </script>
+  </body>
+</html>
