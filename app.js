@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const session = require("express-session");
+const SQLiteStore = require("connect-sqlite3")(session);
 const passport = require("passport");
 const cookieParser = require('cookie-parser');
 const initializePassport = require("./config/passport");
@@ -54,6 +55,10 @@ app.set("views", path.join(__dirname, "views"));
 //SESSION
 app.use(
   session({
+    store: new SQLiteStore({
+      db: 'sessions.db',
+      dir: './temp'
+    }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,

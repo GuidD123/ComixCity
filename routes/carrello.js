@@ -295,7 +295,7 @@ router.post(
         });
       }
 
-      //Validazione totale (consenti anche biglietti gratuiti con totale = 0)
+      //Validazione totale (consente anche biglietti gratuiti con totale = 0)
       if (isNaN(totaleReale) || totaleReale < 0) {
         throw new Error("Totale non valido");
       }
