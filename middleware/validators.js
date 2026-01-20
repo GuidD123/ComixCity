@@ -1,6 +1,10 @@
+/*sistema di validazione input lato server che controlla tutti i dati inviati dagli utenti prima di processarli. 
+È fondamentale per sicurezza e integrità dei dati.*/
+
 const validator = require('validator');
 const { AppError } = require('./errorHandler');
 
+// Funzione generica che crea middleware di validazione
 const validate = (validationRules) => {
   return (req, res, next) => {
     const errors = [];
@@ -71,7 +75,7 @@ const validate = (validationRules) => {
 };
 
 /**
- * Validatori predefiniti
+ * Validatori predefiniti pronti all'uso
  */
 const validators = {
   // Registrazione utente
@@ -263,7 +267,6 @@ const validators = {
 
  //Validatore combinato per checkout
  //Valida billing sempre + carta solo se paymentMethod === 'card'
-
 const validateCheckout = (req, res, next) => {
   const errors = [];
   

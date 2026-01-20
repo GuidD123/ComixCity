@@ -4,7 +4,7 @@ const getDb = require('../db'); //Importa la funzione getDb
 const UtentiDAO = require('../daos/UtentiDAO');
 
 async function initialize(passport) {
-  //CHIAMA getDb() per ottenere l'istanza database
+  //Chiama getDb() per ottenere l'istanza database
   const db = await getDb(); 
   const utentiDAO = new UtentiDAO(db);
 

@@ -29,10 +29,10 @@ function togglePaymentForms(selectedMethod) {
   const paypalForm = document.getElementById('paypalForm');
   const bankForm = document.getElementById('bankForm');
   
-  // Nascondi tutti
-  cardForm.style.display = 'none';
-  paypalForm.style.display = 'none';
-  bankForm.style.display = 'none';
+  // Nascondi tutti con data-attribute
+  cardForm.dataset.hidden = 'true';
+  paypalForm.dataset.hidden = 'true';
+  bankForm.dataset.hidden = 'true';
   
   // Rimuovi required dai campi nascosti
   cardForm.querySelectorAll('input[required]').forEach(input => input.removeAttribute('required'));
@@ -40,14 +40,14 @@ function togglePaymentForms(selectedMethod) {
   // Mostra quello selezionato
   switch(selectedMethod) {
     case 'card':
-      cardForm.style.display = 'block';
+      cardForm.dataset.hidden = 'false';
       cardForm.querySelectorAll('input').forEach(input => input.setAttribute('required', 'required'));
       break;
     case 'paypal':
-      paypalForm.style.display = 'block';
+      paypalForm.dataset.hidden = 'false';
       break;
     case 'bank':
-      bankForm.style.display = 'block';
+      bankForm.dataset.hidden = 'false';
       break;
   }
 }
@@ -156,3 +156,20 @@ function setFieldValidation(input, ok, msg = '') {
     }
   }
 }
+
+// === Protezione disponibilità biglietti ===
+document.addEventListener('DOMContentLoaded', function() {
+  // Ottieni stato disponibilità dal server (inserito nel DOM)
+  const disponibilitaEl = document.getElementById('tuttoDisponibile');
+  const tuttoDisponibile = disponibilitaEl ? disponibilitaEl.value === 'true' : true;
+  
+  const form = document.getElementById('checkoutForm');
+  
+  if (!tuttoDisponibile && form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('⚠️ Alcuni biglietti non sono disponibili. Torna al carrello per aggiornare le quantità.');
+      return false;
+    });
+  }
+});

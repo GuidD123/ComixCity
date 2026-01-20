@@ -3,7 +3,7 @@ class PrenotazioneEventiDAO {
     this.db = db;
   }
 
-  // Prenota un utente a un evento
+  //Prenota un utente a un evento
   async prenotaUtente(
     eventoId,
     utenteId,
@@ -32,11 +32,11 @@ class PrenotazioneEventiDAO {
       }
 
       console.error("Errore in prenotaUtente:", err);
-      throw err; // altri errori (DB, connessione, ecc.)
+      throw err; //altri errori (DB, connessione, ecc.)
     }
   }
 
-  // Annulla una prenotazione (cambia stato in 'annullata')
+  //Annulla una prenotazione (cambia stato in 'annullata')
   async annullaPrenotazione(eventoId, utenteId) {
     const sql = `
       UPDATE eventi_prenotati
@@ -46,14 +46,14 @@ class PrenotazioneEventiDAO {
     return result.changes;
   }
 
-  // Elimina definitivamente una prenotazione (opzionale, usalo solo se vuoi davvero cancellare la riga)
+  //Elimina definitivamente una prenotazione (opzionale, usalo solo se vuoi davvero cancellare la riga)
   async eliminaPrenotazione(eventoId, utenteId) {
     const sql = `DELETE FROM eventi_prenotati WHERE evento_id = ? AND utente_id = ?`;
     const result = await this.db.run(sql, [eventoId, utenteId]);
     return result.changes;
   }
 
-  // Lista tutti gli eventi prenotati da un utente
+  //Lista tutti gli eventi prenotati da un utente
   async getPrenotazioniByUtente(utenteId, includeAnnullate = false) {
     const params = [utenteId];
     let sql = `
@@ -85,7 +85,7 @@ class PrenotazioneEventiDAO {
     }
   }
 
-  // Lista tutti i partecipanti di un evento
+  //Lista tutti i partecipanti di un evento
   async getPartecipanti(eventoId, stato = "attiva") {
     const sql = `
       SELECT u.*, u.username, u.email,  p.data_prenotazione, p.stato, p.tipo_partecipazione, p.note
@@ -96,7 +96,7 @@ class PrenotazioneEventiDAO {
     return await this.db.all(sql, [eventoId, stato]);
   }
 
-  // Verifica se un utente è già prenotato per un evento (utile per evitare doppioni)
+  //Verifica se un utente è già prenotato per un evento (utile per evitare doppioni)
   async isPrenotato(eventoId, utenteId) {
     const sql = `
       SELECT * FROM eventi_prenotati
@@ -104,7 +104,7 @@ class PrenotazioneEventiDAO {
     return await this.db.get(sql, [eventoId, utenteId]);
   }
 
-  // Conta quanti iscritti attivi ha un evento
+  //Conta quanti iscritti attivi ha un evento
   async contaIscritti(eventoId) {
     const sql = `
       SELECT COUNT(*) as totale

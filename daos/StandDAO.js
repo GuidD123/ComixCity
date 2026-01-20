@@ -4,7 +4,7 @@ class StandDAO {
   }
 
   /**
-   * Recupera TUTTI gli stand con calcolo dinamico posti
+   * Recupera tutti gli stand con calcolo dinamico posti
    */
   async getTutti() {
     const sql = `
@@ -45,7 +45,7 @@ class StandDAO {
   }
 
   /**
-   * Recupera UN SINGOLO stand con info posti
+   * Recupera singolo stand con info posti
    */
   async getById(id) {
     const sql = `

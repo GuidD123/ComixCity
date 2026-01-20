@@ -53,6 +53,7 @@ function getFlashMessage(req) {
     prenotazione_non_trovata: "Prenotazione non trovata o già annullata.",
     stand_completo: "Lo stand selezionato non ha più posti disponibili.",
     gia_prenotato_questo: "Hai già prenotato questo stand.",
+    limite_raggiunto: "Hai già uno stand prenotato. Ogni espositore può prenotare un solo stand.",
 
     //CARRELLO
     carrello_vuoto: "Il carrello è vuoto.",
@@ -79,7 +80,7 @@ function getFlashMessage(req) {
     no_data: "Nessun dato disponibile per l’esportazione.",
     internal: "Errore interno del server durante l’elaborazione.",
 
-    // ===== AREA PERSONALE =====
+    //AREA PERSONALE
     nessun_cambio: "Nessuna modifica effettuata.",
     email_in_uso: "Email già in uso da un altro utente.",
     username_in_uso: "Username già in uso da un altro utente.",
@@ -97,10 +98,10 @@ function getFlashMessage(req) {
     login_richiesto: "Devi effettuare il login per acquistare biglietti.",
   };
 
-  // Priorità: leggi da session flash (auto-distrutto alla lettura)
+  //leggi da session flash (auto-distrutto alla lettura)
   if (req.session && req.session.flash) {
     const flash = req.session.flash;
-    delete req.session.flash; // Auto-distruggi dopo lettura
+    delete req.session.flash; //Auto-distrugge dopo lettura
     
     if (flash.success) {
       return {
@@ -119,7 +120,7 @@ function getFlashMessage(req) {
     }
   }
 
-  // Fallback: query string (retrocompatibilità durante migrazione)
+  //Fallback: query string (retrocompatibilità durante migrazione)
   if (req.query && req.query.success)
     return {
       type: "success",

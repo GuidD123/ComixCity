@@ -44,7 +44,7 @@
                    data-img="<%= evento.img || '/img/placeholder-evento.jpg' %>"
                    data-prenotabile="<%= evento.prenotabile ? 1 : 0 %>"
                    data-luogo="<%= evento.luogo || 'Padiglione principale' %>"
-                   data-features='["Data: <%= new Date(evento.data).toLocaleDateString('it-IT') %>", "Iscritti: <%= evento.iscritti_count || 0 %>", "Organizzato da ComixCity"]'>
+                   data-features='["Data: <%= new Date(evento.data).toLocaleDateString('it-IT') %><%= evento.orario ? ' alle ' + evento.orario : '' %>", "Iscritti: <%= evento.iscritti_count || 0 %>", "Organizzato da ComixCity"]'>
               
                 <% if (evento.img && evento.img.trim() !== '') { %>
                     <img src="<%= evento.img %>" 
@@ -63,6 +63,11 @@
                 
                 <div class="evento-info">
                   <h3><%= evento.titolo %></h3>
+                  <% 
+                    const dataObj = new Date(evento.data);
+                    const orarioFormattato = dataObj.toLocaleTimeString('it-IT', {hour: '2-digit', minute: '2-digit'});
+                  %>
+                  <p class="evento-orario">🕐 <%= orarioFormattato %></p>
                   <!-- Descrizione tronca per invogliare ad aprire il modal -->
                   <p><%= evento.descrizione.length > 100 ? evento.descrizione.substring(0, 100) + '...' : evento.descrizione %></p>
                 </div>
@@ -71,12 +76,11 @@
                   <% if (user) { %>
                     <% if (evento.prenotabile) { %>
                       <% if (evento.prenotato) { %>
-                        <form method="POST" action="/eventi/<%= evento.id %>/annulla" style="display:inline;" 
-                              onsubmit="return confirm('Sicuro di voler annullare la prenotazione?')">
+                        <form method="POST" action="/eventi/<%= evento.id %>/annulla" class="inline-display">
                           <button type="submit" class="btn btn-danger">Annulla Prenotazione</button>
                         </form>
                       <% } else { %>
-                        <form method="POST" action="/eventi/<%= evento.id %>/prenota" style="display:inline;">
+                        <form method="POST" action="/eventi/<%= evento.id %>/prenota" class="inline-display">
                           <input type="hidden" name="tipo_partecipazione" value="partecipante">
                           <button type="submit" class="btn-secondary">Prenota</button>
                         </form>
@@ -99,7 +103,7 @@
                       <button type="submit" class="btn btn-danger btn-sm" 
                               onclick="return confirm('Sicuro di eliminare questo evento? Tutte le prenotazioni verranno cancellate!')">Elimina</button>
                     </form>
-                    <a href="/eventi/<%= evento.id %>/partecipanti" class="btn btn-info btn-sm" style="margin-left: 0.5rem;">Partecipanti</a>
+                    
                   </div>
                 <% } %>
               </div>

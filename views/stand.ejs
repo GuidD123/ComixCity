@@ -67,7 +67,7 @@
                   </span>
                 </div>
                 <div class="occupazione-bar">
-                  <div class="occupazione-fill" style="width: <%= percentualeOccupata %>%;"></div>
+                  <div class="occupazione-fill" data-width="<%= percentualeOccupata %>"></div>
                 </div>
               </div>
 
@@ -97,7 +97,7 @@
                 <% } %>
                 
                 <% if (s.espositori && postiOccupati > 0) { %>
-                <p  style="grid-column: span 2;">
+                <p class="grid-span-2">
                   <strong>Espositori</strong> <%= s.espositori %>
                 </p>
                 <% } %>
@@ -134,7 +134,11 @@
                   </small>
                   
                 <% } else if (user.ruolo === 'espositore' || user.ruolo === 'admin') { %>
-                  <button class="btn" onclick="prenotaStand('<%= s.id %>', '<%= s.nome %>', <%= postiDisponibili %>)">
+                  <button class="btn" 
+                          data-prenota-stand
+                          data-stand-id="<%= s.id %>" 
+                          data-stand-nome="<%= s.nome %>" 
+                          data-posti="<%= postiDisponibili %>">
                     🏪 Prenota (<%= postiDisponibili %> <%= postiDisponibili === 1 ? 'libero' : 'liberi' %>)
                   </button>
                   
@@ -156,7 +160,7 @@
           <% } %> 
           
           <% if (user && (user.ruolo === 'espositore' || user.ruolo === 'admin')) { %>
-          <form id="prenotazioneForm" action="/stand/prenota" method="POST" style="display: none">
+          <form id="prenotazioneForm" action="/stand/prenota" method="POST" data-hidden="true">
             <input type="hidden" id="standIdHidden" name="standId" />
           </form>
           <% } %>

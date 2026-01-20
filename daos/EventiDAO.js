@@ -3,26 +3,26 @@ class EventiDAO {
     this.db = db;
   }
 
-  // Recupera TUTTI gli eventi dal database, ordinati per data
+  //Recupera TUTTI gli eventi dal database, ordinati per data
   async getTutti() {
     const sql = "SELECT * FROM eventi ORDER BY data";
     return await this.db.all(sql);
   }
 
-  // Recupera UN SINGOLO evento tramite il suo ID
+  //Recupera UN SINGOLO evento tramite il suo ID
   async getById(id) {
     const sql = "SELECT * FROM eventi WHERE id = ?";
     return await this.db.get(sql, [id]);
   }
 
-  // Cerca eventi che contengono un termine nel titolo O nella descrizione
+  //Cerca eventi che contengono un termine nel titolo O nella descrizione
   async cerca(termine) {
     const q = `%${termine}%`;
     const sql = `SELECT * FROM eventi WHERE titolo LIKE ? OR descrizione LIKE ? ORDER BY data`;
     return await this.db.all(sql, [q, q]);
   }
 
-  // Aggiunge un NUOVO evento nel database
+  // ggiunge un NUOVO evento nel database
   async aggiungi({
     titolo,
     descrizione,
@@ -47,10 +47,10 @@ class EventiDAO {
       caratteristiche || null,
       prenotabile !== undefined ? prenotabile : 1
     ]);
-    return result.lastID; // Restituisce l'ID del record appena inserito (auto-incrementale)
+    return result.lastID; //Restituisce l'ID del record appena inserito (auto-incrementale)
   }
 
-  // Modifica un evento esistente
+  //Modifica un evento esistente
   async modifica(
     id,
     { titolo, descrizione, data, img, luogo, categoria, caratteristiche, prenotabile }
@@ -70,7 +70,7 @@ class EventiDAO {
     return result.changes;
   }
 
-  // Elimina un evento dal database
+  //Elimina un evento dal database
   async elimina(id) {
     const sql = `DELETE FROM eventi WHERE id = ?`;
     const result = await this.db.run(sql, [id]);

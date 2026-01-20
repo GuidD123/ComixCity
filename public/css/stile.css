@@ -1510,6 +1510,14 @@ nav a:hover {
   font-size: 1.3rem;
 }
 
+.evento-info .evento-orario {
+  color: var(--colore-accento);
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin: 0.3rem 0;
+  opacity: 0.95;
+}
+
 .evento-info p {
   font-size: 0.95rem;
   color: rgba(255, 255, 255, 0.9);
@@ -5912,7 +5920,7 @@ body:has(.admin-dashboard) .background-gradient,
   transform: translateX(-5px);
 }
 
-/* ===== ANTEPRIMA IMMAGINE ===== */
+/*ANTEPRIMA IMMAGINE*/
 .img-preview-container {
   animation: fadeIn 0.4s ease-in;
 }
@@ -5935,7 +5943,7 @@ body:has(.admin-dashboard) .background-gradient,
   transform: scale(1.02);
 }
 
-/* ===== VALIDAZIONE VISIVA ===== */
+/* VALIDAZIONE VISIVA */
 .evento-form input:valid,
 .evento-form textarea:valid {
   border-color: #28a745;
@@ -5946,7 +5954,7 @@ body:has(.admin-dashboard) .background-gradient,
   border-color: #dc3545;
 }
 
-/* ===== RESPONSIVE MOBILE ===== */
+/*RESPONSIVE MOBILE*/
 @media (max-width: 768px) {
   .form-admin-evento {
     padding: 6rem 1rem 2rem;
@@ -5976,7 +5984,7 @@ body:has(.admin-dashboard) .background-gradient,
   }
 }
 
-/* ===== MIGLIORAMENTI ACCESSIBILITÀ ===== */
+/*MIGLIORAMENTI ACCESSIBILITÀ */
 .evento-form input[type="date"] {
   cursor: pointer;
 }
@@ -5986,7 +5994,7 @@ body:has(.admin-dashboard) .background-gradient,
   font-size: 0.9rem;
 }
 
-/* ===== ANIMAZIONE SUBMIT BUTTON ===== */
+/*  ANIMAZIONE SUBMIT BUTTON  */
 .evento-form button[type="submit"] {
   position: relative;
   overflow: hidden;
@@ -6010,7 +6018,7 @@ body:has(.admin-dashboard) .background-gradient,
   height: 300px;
 }
 
-/* ===== FEEDBACK ERRORI (se usi validazione JS) ===== */
+/*  FEEDBACK ERRORI */
 .form-error {
   color: #dc3545;
   font-size: 0.85rem;
@@ -6028,7 +6036,7 @@ body:has(.admin-dashboard) .background-gradient,
   background-color: #fff5f5;
 }
 
-/* ===== LOADING STATE (opzionale) ===== */
+/* LOADING STATE */
 .evento-form button[type="submit"]:disabled {
   opacity: 0.6;
   cursor: not-allowed;
@@ -6135,7 +6143,7 @@ body:has(.admin-dashboard) .background-gradient,
   }
 }
 
-/* ===== 2. NAVBAR MOBILE FIXES ===== */
+/*  NAVBAR MOBILE FIXES */
 @media (max-width: 768px) {
   .navbar {
     padding: 1rem 0;
@@ -6216,7 +6224,7 @@ body:has(.admin-dashboard) .background-gradient,
   }
 }
 
-/* ===== 3. HERO SECTION MOBILE ===== */
+/* HERO SECTION MOBILE  */
 @media (max-width: 768px) {
   .hero {
     min-height: 80vh;
@@ -6269,7 +6277,7 @@ body:has(.admin-dashboard) .background-gradient,
   }
 }
 
-/* ===== 4. BIGLIETTI PAGE MOBILE ===== */
+/* BIGLIETTI PAGE MOBILE */
 @media (max-width: 768px) {
   .biglietti-hero .hero-content-chisiamo h1 {
     font-size: 3rem;
@@ -6313,7 +6321,7 @@ body:has(.admin-dashboard) .background-gradient,
   }
 }
 
-/* ===== 5. EVENTI PAGE MOBILE ===== */
+/*  EVENTI PAGE MOBILE  */
 @media (max-width: 768px) {
   .eventi-grid {
     grid-template-columns: 1fr;
@@ -6355,7 +6363,7 @@ body:has(.admin-dashboard) .background-gradient,
   }
 }
 
-/* ===== 6. CARRELLO MOBILE ===== */
+/*  CARRELLO MOBILE */
 @media (max-width: 768px) {
   .carrello-tabella {
     font-size: 0.8rem;
@@ -6387,7 +6395,7 @@ body:has(.admin-dashboard) .background-gradient,
   }
 }
 
-/* ===== 7. STAND PAGE MOBILE ===== */
+/* STAND PAGE MOBILE */
 @media (max-width: 768px) {
   .stand-grid {
     grid-template-columns: 1fr;
@@ -6430,7 +6438,7 @@ body:has(.admin-dashboard) .background-gradient,
   }
 }
 
-/* ===== 8. LOGIN/REGISTER MOBILE ===== */
+/* LOGIN/REGISTER MOBILE  */
 @media (max-width: 768px) {
   .login-hero {
     min-height: 60vh;
@@ -6465,7 +6473,7 @@ body:has(.admin-dashboard) .background-gradient,
   }
 }
 
-/* ===== 9. CHI SIAMO MOBILE ===== */
+/* CHI SIAMO MOBILE*/
 @media (max-width: 768px) {
   .hero-content-chisiamo h1 {
     font-size: 3rem;
@@ -6509,7 +6517,7 @@ body:has(.admin-dashboard) .background-gradient,
   }
 }
 
-/* ===== 10. ADMIN PAGE MOBILE ===== */
+/* ADMIN PAGE MOBILE*/
 @media (max-width: 768px) {
   .admin-section {
     padding: 2rem 1rem;
@@ -6575,7 +6583,7 @@ body:has(.admin-dashboard) .background-gradient,
   }
 }
 
-/* ===== 11. FOOTER MOBILE ===== */
+/* FOOTER MOBILE */
 @media (max-width: 768px) {
   .site-footer {
     padding: 2rem 1rem 1rem;
@@ -6602,7 +6610,7 @@ body:has(.admin-dashboard) .background-gradient,
   }
 }
 
-/* ===== 12. FAQ MOBILE ===== */
+/* FAQ MOBILE */
 @media (max-width: 768px) {
   .faq-grid {
     flex-direction: column;
@@ -6623,7 +6631,7 @@ body:has(.admin-dashboard) .background-gradient,
   }
 }
 
-/* ===== 13. UTILITIES MOBILE ===== */
+/* UTILITIES MOBILE*/
 @media (max-width: 768px) {
   
   /* Text utilities */
@@ -6778,7 +6786,7 @@ body:has(.admin-dashboard) .background-gradient,
 }
 
 
-/* ===== EVENTI HOMEPAGE (sezione #eventi) ===== */
+/* EVENTI HOMEPAGE (sezione #eventi) */
 @media (max-width: 768px) {
   
   .sezione-eventi {
@@ -6822,7 +6830,7 @@ body:has(.admin-dashboard) .background-gradient,
   }
 }
 
-/* ===== EVENTI PAGINA DEDICATA (/eventi) ===== */
+/*  EVENTI PAGINA DEDICATA (/eventi) */
 @media (max-width: 768px) {
   
   .eventi-hero {
@@ -6877,7 +6885,7 @@ body:has(.admin-dashboard) .background-gradient,
   }
 }
 
-/* ===== SCHERMI MOLTO PICCOLI (480px) ===== */
+/* SCHERMI MOLTO PICCOLI (480px) */
 @media (max-width: 480px) {
   
   .sezione-eventi .evento-card {
@@ -6903,7 +6911,7 @@ body:has(.admin-dashboard) .background-gradient,
 }
 
 
-/* ===== CORREZIONI SPECIFICHE OVERFLOW ===== */
+/*  CORREZIONI SPECIFICHE OVERFLOW*/
 @media (max-width: 768px) {
   
   .sezione-eventi,
@@ -6926,7 +6934,7 @@ body:has(.admin-dashboard) .background-gradient,
   }
 }
 
-/* ===== CORREZIONE ANIMAZIONI MOBILE ===== */
+/*CORREZIONE ANIMAZIONI MOBILE */
 @media (max-width: 768px) {
   
 
@@ -6945,7 +6953,7 @@ body:has(.admin-dashboard) .background-gradient,
 
 
 
-/* ===== ADMIN HERO HEADER ===== */
+/* ADMIN HERO HEADER */
 .admin-hero {
   text-align: center;
   padding: 8rem 1rem 1rem;
@@ -6971,7 +6979,7 @@ body:has(.admin-dashboard) .background-gradient,
   color: rgba(255, 255, 255, 0.8);
 }
 
-/* ===== STATISTICS CARDS GRID ===== */
+/* STATISTICS CARDS GRID */
 .admin-stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -7077,14 +7085,14 @@ body:has(.admin-dashboard) .background-gradient,
 }
 
 
-/* ===== CONTAINER TABELLE ===== */
+/* CONTAINER TABELLE */
 .admin-tables-container {
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 1.5rem;
 }
 
-/* ===== TABELLE COMPATTE MODERNE ===== */
+/*  TABELLE COMPATTE MODERNE */
 .admin-table-compact {
   background: white;
   border-radius: 16px;
@@ -7121,7 +7129,7 @@ body:has(.admin-dashboard) .background-gradient,
   font-weight: 600;
 }
 
-/* ===== TABELLA MODERNA ===== */
+/*  TABELLA MODERNA  */
 .table-wrapper {
   overflow-x: auto;
 }
@@ -7166,7 +7174,7 @@ body:has(.admin-dashboard) .background-gradient,
   font-size: 0.95rem;
 }
 
-/* ===== BADGES E ELEMENTI SPECIALI ===== */
+/*  BADGES E ELEMENTI SPECIALI  */
 .id-badge {
   background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
@@ -7258,7 +7266,7 @@ body:has(.admin-dashboard) .background-gradient,
   color: #6c757d;
 }
 
-/* ===== RESPONSIVE MOBILE ===== */
+/*  RESPONSIVE MOBILE  */
 @media (max-width: 768px) {
   
   .admin-hero {
@@ -7361,7 +7369,7 @@ body:has(.admin-dashboard) .background-gradient,
   }
 }
 
-/* ===== SCHERMI MOLTO PICCOLI ===== */
+/* SCHERMI MOLTO PICCOLI */
 @media (max-width: 480px) {
   .admin-stats-grid {
     gap: 0.75rem;
@@ -7399,5 +7407,56 @@ body:has(.admin-dashboard) .background-gradient,
   }
 }
 
+/*data-hidden attribute*/
+[data-hidden="true"] {
+  display: none !important;
+}
 
+[data-hidden="false"] {
+  display: block !important;
+}
 
+.inline-display {
+  display: inline !important;
+}
+
+/* Section divider */
+.section-divider {
+  margin: 2rem 0;
+  border: none;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* Delete section styles */
+.delete-section-header {
+  color: var(--colore-primario);
+  margin-bottom: 1rem;
+}
+
+.delete-section-text {
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+/* Image preview utility */
+.image-preview {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+/* Image object-position utility */
+.object-position-top {
+  object-position: top center !important;
+}
+
+/* Background image cards for preview grid */
+.card-1 { background-image: url('/img/TickInt.jpg'); }
+.card-2 { background-image: url('/img/RidCos.jpg'); }
+.card-3 { background-image: url('/img/GratBamb.jpg'); }
+.card-4 { background-image: url('/img/GratDisab.jpg'); }
+
+/* Grid utilities */
+.grid-span-2 {
+  grid-column: span 2;
+}

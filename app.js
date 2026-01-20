@@ -57,7 +57,9 @@ app.use(
   session({
     store: new SQLiteStore({
       db: 'sessions.db',
-      dir: './temp'
+      dir: './temp',
+      ttl: 24 * 60 * 60 * 1000, // 24 ore - auto-cleanup sessioni scadute
+      cleanupInterval: 60 * 60 * 1000 // Pulizia ogni ora
     }),
     secret: process.env.SESSION_SECRET,
     resave: false,

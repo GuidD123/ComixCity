@@ -5,8 +5,7 @@ const StandDAO = require("../daos/StandDAO");
 const { onlyEspositore } = require("../middleware/auth");
 const { AppError, catchAsync } = require("../middleware/errorHandler");
 const { validate } = require("../middleware/validators");
-const { getFlashMessage } = require("../middleware/flashHelper");
-
+const { getFlashMessage, setFlash } = require("../middleware/flashHelper");
 
 const validaPrenotazioneStand = validate({
   standId: {
@@ -132,6 +131,18 @@ router.post(
         return res.redirect(
           `/stand?error=gia_prenotato_questo&stand=${encodeURIComponent(stand.nome)}`
         );
+      }
+
+      // CONTROLLO: Un espositore può avere solo 1 stand in totale
+      const haGiaUnoStand = await db.get(
+        "SELECT s.nome FROM stand_prenotati sp JOIN stand s ON sp.stand_id = s.id WHERE sp.utente_id = ?",
+        [userId]
+      );
+
+      if (haGiaUnoStand) {
+        await db.run("ROLLBACK");
+        setFlash(req, 'error', 'limite_raggiunto');
+        return res.redirect('/stand');
       }
 
       // Prenota un posto

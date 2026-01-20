@@ -1,10 +1,11 @@
 // middleware/sessionLogger.js - LOGGER COME MIDDLEWARE
+//funzioni servono per tracciare e registrare tutte le attività di autenticazione nel database (tabella user_sessions_log) -> audit/logging di sicurezza
 
 const getDb = require('../db');
 
 class SessionLogger {
   
-  // LOG LOGIN RIUSCITO
+  //LOG Registra login riusciti
   static async logSuccessfulLogin(user, req) {
     try {
       const db = await getDb();
@@ -22,7 +23,7 @@ class SessionLogger {
     }
   }
 
-  // LOG LOGIN FALLITO
+  // LOG Registra tentativi di login falliti
   static async logFailedLogin(email, reason, req) {
     try {
       const db = await getDb();
@@ -40,7 +41,7 @@ class SessionLogger {
     }
   }
 
-  // LOG RATE LIMITING
+  // LOG Registra blocchi per troppi tentativi
   static async logRateLimited(email, reason, req) {
     try {
       const db = await getDb();
@@ -58,7 +59,7 @@ class SessionLogger {
     }
   }
 
-  // LOG LOGOUT
+  // LOG Registra logout
   static async logLogout(user, req) {
     try {
       const db = await getDb();

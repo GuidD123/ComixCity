@@ -11,20 +11,20 @@ class BigliettiDAO {
     return await this.db.all(sql);
   }
 
-  // Ritorna solo i biglietti disponibili (> 0)
+  //Ritorna solo i biglietti disponibili (> 0)
   async getDisponibili() {
     const sql =
       "SELECT * FROM biglietti WHERE disponibili > 0 ORDER BY CASE WHEN prezzo = 0 THEN 1 ELSE 0 END, prezzo DESC";
     return await this.db.all(sql);
   }
 
-  // Dato un ID, ritorna i dettagli del biglietto
+  //Dato un ID, ritorna i dettagli del biglietto
   async getById(id) {
     const sql = "SELECT * FROM biglietti WHERE id = ?";
     return await this.db.get(sql, [id]);
   }
 
-  // Aggiorna la quantità disponibile (dopo acquisto)
+  //Aggiorna la quantità disponibile (dopo acquisto)
   async aggiornaDisponibili(id, nuovaQuantita) {
     const sql = `
     UPDATE biglietti 
@@ -40,13 +40,13 @@ class BigliettiDAO {
     return result.changes;
   }
 
-  // Cerca un biglietto per nome (decommenta se serve)
+  //Cerca un biglietto per nome (decommenta se serve)
   async getByNome(nome) {
     const sql = "SELECT * FROM biglietti WHERE nome = ?";
     return await this.db.get(sql, [nome]);
   }
 
-  // Ritorna il totale biglietti venduti e incasso
+  //Ritorna il totale biglietti venduti e incasso
   async getStatisticheVendite() {
     const sql = `
     SELECT 

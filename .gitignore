@@ -18,8 +18,10 @@ npm-debug.log*
 .npm
 .cache/
 
-# File temporanei
-temp/
+# File temporanei (preserva il DB delle sessioni)
+temp/*
+!temp/.gitkeep
+!temp/sessions.db
 tmp/
 *.tmp
 

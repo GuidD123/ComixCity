@@ -16,7 +16,7 @@
 
         <!-- Searchbar nascosta -->
         <div class="search-bar-wrapper" id="searchBar">
-          <form class="search-form" onsubmit="return false;">
+          <form class="search-form" data-prevent-submit>
             <input type="text" id="searchInput" name="q" placeholder="Cerca..." required autocomplete="off" />
             <div id="searchResults" class="search-results"></div>
           </form>

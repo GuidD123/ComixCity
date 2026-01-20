@@ -11,7 +11,7 @@
   <%- include('partials/flashmex') %>
 
   <% if (typeof tuttoDisponibile !== 'undefined' && !tuttoDisponibile) { %>
-  <div class="alert alert-warning anim-fade-up" style="max-width: 1200px; margin: 20px auto; padding: 15px; background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; text-align: center;">
+  <div class="alert alert-warning anim-fade-up">
     ⚠️ <strong>Attenzione:</strong> Alcuni biglietti potrebbero non essere più disponibili nella quantità richiesta. Verifica il carrello prima di procedere.
   </div>
   <% } %>
@@ -150,7 +150,7 @@
             </div>
 
             <!-- FORM PAYPAL -->
-            <div id="paypalForm" class="payment-form-section" style="display: none;">
+            <div id="paypalForm" class="payment-form-section" data-hidden="true">
               <div class="paypal-info">
                 <p>🔵 Verrai reindirizzato su PayPal per completare il pagamento in sicurezza.</p>
                 <p><strong>Email PayPal:</strong> Useremo l'email del tuo account ComixCity</p>
@@ -158,7 +158,7 @@
             </div>
 
             <!-- FORM BONIFICO -->
-            <div id="bankForm" class="payment-form-section" style="display: none;">
+            <div id="bankForm" class="payment-form-section" data-hidden="true">
               <div class="bank-info">
                 <p>🏦 <strong>Bonifico Bancario</strong></p>
                 <div class="bank-details">
@@ -260,27 +260,12 @@
     </section>
   </section>
 
+  <!-- Hidden input per passare disponibilità a JS -->
+  <input type="hidden" id="tuttoDisponibile" value="<%= typeof tuttoDisponibile !== 'undefined' ? tuttoDisponibile : true %>">
+
   <%- include('partials/footer1') %>
   <script src="/js/script.js"></script>
   <script src="/js/checkout.js"></script>
-
-  <!-- Protezione client-side per prevenire submit quando biglietti non disponibili 
-   Questa è una protezione aggiuntiva lato client: il controllo definitivo
-   avviene comunque nel backend durante il POST /checkout.-->
-  <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const tuttoDisponibile = <%= typeof tuttoDisponibile !== 'undefined' ? tuttoDisponibile : true %>;
-    const form = document.getElementById('checkoutForm');
-    
-    if (!tuttoDisponibile && form) {
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        alert('⚠️ Alcuni biglietti non sono disponibili. Torna al carrello per aggiornare le quantità.');
-        return false;
-      });
-    }
-  });
-  </script>
 
 </body>
 </html>

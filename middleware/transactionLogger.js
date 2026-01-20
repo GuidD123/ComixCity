@@ -1,4 +1,7 @@
 //Logger per transazioni
+//sistema di logging per le transazioni di pagamento (acquisto biglietti). 
+//Traccia l'intero ciclo di vita di ogni pagamento nel database (tabella transaction_log).
+
 const getDb = require("../db");
 
 class TransactionLogger {
@@ -14,7 +17,7 @@ class TransactionLogger {
     };
   }
 
-  //INIZIA LOG TRANSAZIONE (quando inizia il processo)
+  //INIZIA LOG TRANSAZIONE - Inizia il log quando parte il checkout
   static async startTransaction(userId, paymentMethod, amount, req) {
     try {
       const db = await getDb();
@@ -49,7 +52,7 @@ class TransactionLogger {
     }
   }
 
-  //Aggiorna status transazione
+  //Aggiorna status transazione - Aggiorna stato durante il processo
   static async updateTransactionStatus(
     transactionId,
     status,
@@ -87,7 +90,7 @@ class TransactionLogger {
     }
   }
 
-  //Log transazione completata
+  //Log transazione completata - Transazione riuscita
   static async logCompletedTransaction(
     transactionId,
     acquistoId,
@@ -122,7 +125,7 @@ class TransactionLogger {
     }
   }
 
-  //Log transazione fallita
+  //Log transazione fallita - Transazione fallita
   static async logFailedTransaction(
     transactionId,
     errorMessage,
@@ -152,7 +155,7 @@ class TransactionLogger {
     return `TXN_${timestamp}_${random}`;
   }
 
-  //Ottieni transazioni per utente
+  //Ottieni transazioni per utente - Storico transazioni per utente (ultimi 10)
   static async getTransactionsByUser(userId, limit = 10) {
     try {
       const db = await getDb();
@@ -177,7 +180,7 @@ class TransactionLogger {
     }
   }
 
-  //Statistiche transazioni per admin
+  //Statistiche transazioni per admin - Statistiche admin: transazioni/giorno, fatturato, successi/fallimenti
   static async getTransactionStats(days = 7) {
     try {
       const db = await getDb();
@@ -203,7 +206,7 @@ class TransactionLogger {
     }
   }
 
-  //Transazioni sospette (multiple fallite stesso IP)
+  //Transazioni sospette (multiple fallite stesso IP) - rileva IP con 3+ tentativi falliti (possibili attacchi)
   static async getSuspiciousTransactions(hours = 24) {
     try {
       const db = await getDb();

@@ -57,16 +57,16 @@
 
           <!-- Data Evento -->
           <div class="form-group anim-slide-right delay-300">
-            <label for="data">📅 Data Evento</label>
+            <label for="data">📅 Data e Orario Evento</label>
             <input
-              type="date"
+              type="datetime-local"
               id="data"
               name="data"
               required
-              value="<%= evento?.data?.slice(0, 10) || '' %>"
-              min="<%= new Date().toISOString().split('T')[0] %>"
+              value="<%= evento?.data ? evento.data.replace(' ', 'T').slice(0, 16) : '' %>"
+              min="<%= new Date().toISOString().slice(0, 16) %>"
             />
-            <small class="form-help">Seleziona una data futura</small>
+            <small class="form-help">Seleziona data e ora dell'evento</small>
           </div>
 
           <!-- Luogo / Stand Evento -->
@@ -126,7 +126,7 @@
               <img
                 src="<%= evento.img %>"
                 alt="<%= evento.titolo %>"
-                style="max-width: 100%; border-radius: 8px; margin-top: 0.5rem"
+                class="image-preview"
               />
             </div>
           </div>
@@ -141,20 +141,18 @@
         <!-- FORM ELIMINAZIONE (solo se in modalità modifica) -->
         <% if (evento) { %>
         <div class="delete-section anim-fade-up delay-700">
-          <hr
-            style="margin: 2rem 0; border: none; border-top: 1px solid #e0e0e0"
-          />
-          <h3 style="color: var(--colore-primario); margin-bottom: 1rem">
+          <hr class="section-divider" />
+          <h3 class="delete-section-header">
             ⚠️ Zona Pericolosa
           </h3>
-          <p style="color: #666; margin-bottom: 1rem">
+          <p class="delete-section-text">
             Questa azione eliminerà definitivamente l'evento e non può essere
             annullata.
           </p>
           <form
             action="/eventi/elimina/<%= evento.id %>"
             method="POST"
-            onsubmit="return confirm('⚠️ SEI SICURO?\n\nQuesta azione eliminerà definitivamente l\'evento:\n\n📌 <%= evento.titolo %>\n\n❌ Non sarà possibile recuperarlo!');"
+            data-titolo-evento="<%= evento.titolo %>"
           >
             <button type="submit" class="btn btn-secondary">
               🗑️ Elimina Evento
@@ -180,14 +178,14 @@
         const form = imgInput.closest("form");
 
         // Crea container anteprima se non esiste
-        if (!document.querySelector(".img-preview")) {
+        if (!document.querySelector(".img-preview-container")) {
           const previewDiv = document.createElement("div");
           previewDiv.className = "form-group img-preview-container";
-          previewDiv.style.display = "none";
+          previewDiv.dataset.hidden = "true";
           previewDiv.innerHTML = `
           <label>📸 Anteprima:</label>
           <div class="img-preview">
-            <img id="imgPreview" src="" alt="Anteprima" style="max-width: 100%; border-radius: 8px; margin-top: 0.5rem;">
+            <img id="imgPreview" src="" alt="Anteprima" class="image-preview">
           </div>
         `;
           imgInput
@@ -207,16 +205,16 @@
             url &&
             (url.startsWith("http://") || url.startsWith("https://"))
           ) {
-            previewContainer.style.display = "block";
+            previewContainer.dataset.hidden = "false";
             previewImg.src = url;
 
             // Gestisci errore caricamento
             previewImg.onerror = function () {
               previewContainer.innerHTML =
-                "<p style=\"color: #dc3545; font-size: 0.9rem;\">⚠️ Impossibile caricare l'immagine. Verifica l'URL.</p>";
+                "<p class=\"field-error\">⚠️ Impossibile caricare l'immagine. Verifica l'URL.</p>";
             };
           } else {
-            previewContainer.style.display = "none";
+            previewContainer.dataset.hidden = "true";
           }
         });
 

@@ -76,6 +76,15 @@ document.addEventListener("DOMContentLoaded", () => {
   //RICERCA DA BARRA
   const searchInputLive = document.getElementById("searchInput");
   const searchResults = document.getElementById("searchResults");
+  
+  // Previeni submit form ricerca
+  const searchForms = document.querySelectorAll('form[data-prevent-submit]');
+  searchForms.forEach(form => {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      return false;
+    });
+  });
 
   if (searchInputLive && searchResults) {
     let timeout;
@@ -741,3 +750,103 @@ function dismissAlert(alert) {
     alert.remove();
   }, 400);
 }
+
+// === GESTIONE CARRELLO ===
+// Previeni doppio submit sul form checkout
+document.addEventListener("DOMContentLoaded", function () {
+  const checkoutForm = document.querySelector('form[action="/carrello/checkout"]');
+  if (checkoutForm) {
+    checkoutForm.addEventListener("submit", function () {
+      const btn = checkoutForm.querySelector("button[type=submit]");
+      if (btn && !btn.disabled) {
+        btn.disabled = true;
+        btn.innerText = "Attendi...";
+      }
+    });
+  }
+});
+
+// === GESTIONE EVENTI ===
+// Conferma annullamento prenotazione
+document.addEventListener("DOMContentLoaded", function () {
+  const formAnnulla = document.querySelectorAll('form[action*="/eventi/"][action$="/annulla"]');
+  formAnnulla.forEach(form => {
+    form.addEventListener("submit", function (e) {
+      if (!confirm('Sicuro di voler annullare la prenotazione?')) {
+        e.preventDefault();
+      }
+    });
+  });
+});
+
+// === GESTIONE EVENTO-FORM (ADMIN) ===
+// Conferma eliminazione evento
+document.addEventListener("DOMContentLoaded", function () {
+  const formElimina = document.querySelector('form[action*="/eventi/"][action$="/elimina"]');
+  if (formElimina) {
+    const titoloEvento = formElimina.dataset.titoloEvento || "questo evento";
+    formElimina.addEventListener("submit", function (e) {
+      const conferma = confirm(
+        `⚠️ SEI SICURO?\n\nQuesta azione eliminerà definitivamente l'evento:\n\n📌 ${titoloEvento}\n\n❌ Non sarà possibile recuperarlo!`
+      );
+      if (!conferma) {
+        e.preventDefault();
+      }
+    });
+  }
+});
+
+// === GESTIONE STAND ===
+// Prenotazione stand con data-attributes
+document.addEventListener("DOMContentLoaded", function () {
+  const bottoniPrenota = document.querySelectorAll('[data-prenota-stand]');
+  
+  bottoniPrenota.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const standId = this.dataset.standId;
+      const nomeStand = this.dataset.standNome;
+      const postiDisponibili = this.dataset.posti;
+      
+      // Conferma prenotazione
+      const conferma = confirm(
+        `🏪 Vuoi prenotare uno stand in "${nomeStand}"?\n\n` +
+        `Posti disponibili: ${postiDisponibili}\n\n` +
+        `Clicca OK per confermare.`
+      );
+      
+      if (conferma) {
+        const form = document.getElementById('prenotazioneForm');
+        if (form) {
+          document.getElementById('standIdHidden').value = standId;
+          form.submit();
+        }
+      }
+    });
+  });
+});
+
+// === GESTIONE EVENTO-FORM - PREVIEW IMMAGINE ===
+document.addEventListener("DOMContentLoaded", function () {
+  const imgInput = document.getElementById('immagine');
+  const imgPreview = document.getElementById('imgPreview');
+  
+  if (imgInput && imgPreview) {
+    imgInput.addEventListener('change', function() {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          imgPreview.src = e.target.result;
+          imgPreview.dataset.hidden = 'false';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+  
+  // Applica width dinamico per progress bar stand
+  const occupazioneFills = document.querySelectorAll('.occupazione-fill[data-width]');
+  occupazioneFills.forEach(fill => {
+    fill.style.width = fill.dataset.width + '%';
+  });
+});
