@@ -1,10 +1,13 @@
 /*sistema di validazione input lato server che controlla tutti i dati inviati dagli utenti prima di processarli. 
-È fondamentale per sicurezza e integrità dei dati.*/
+È fondamentale per sicurezza e integrità dei dati
+In pratica controlla tutto ciò che gli utenti inviano al server prima di salvarlo nel database - evita SQL Injection
+Fondamentale perchè c'è validazione lato client (JS) e lato server - ogni dato che entra nel db passa prima da questi controlli*/
 
 const validator = require('validator');
 const { AppError } = require('./errorHandler');
 
-// Funzione generica che crea middleware di validazione
+//Funzione generica che crea middleware di validazione che controlla regole specifiche quali: required, email valida, lunghezza min/max, pattern regex, valori enum, custom logic
+//se errore blocca richiesta e mostra messaggio all'utente
 const validate = (validationRules) => {
   return (req, res, next) => {
     const errors = [];
@@ -103,7 +106,7 @@ const validators = {
     }
   }),
   
-  // Creazione/Modifica evento
+  //Creazione/Modifica evento
   evento: validate({
     titolo: {
       required: true,

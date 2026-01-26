@@ -1,15 +1,17 @@
+/*EventiDAO.js → DAO - Data Access Object per gli eventi: è il ponte tra il codice e il db, cioè gestisce tutte le operazioni sugli eventi nella tabella eventi(database) */
+
 class EventiDAO {
   constructor(db) {
     this.db = db;
   }
 
-  //Recupera TUTTI gli eventi dal database, ordinati per data
+  //Recupera tutti gli eventi dal database, ordinati per data
   async getTutti() {
     const sql = "SELECT * FROM eventi ORDER BY data";
     return await this.db.all(sql);
   }
 
-  //Recupera UN SINGOLO evento tramite il suo ID
+  //Recupera singolo evento tramite il suo ID
   async getById(id) {
     const sql = "SELECT * FROM eventi WHERE id = ?";
     return await this.db.get(sql, [id]);
@@ -22,7 +24,7 @@ class EventiDAO {
     return await this.db.all(sql, [q, q]);
   }
 
-  // ggiunge un NUOVO evento nel database
+  //aggiunge un NUOVO evento nel database
   async aggiungi({
     titolo,
     descrizione,

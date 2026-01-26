@@ -45,7 +45,7 @@ class TransactionLogger {
         transactionId: transactionId,
       };
     } catch (error) {
-      console.error("❌ [TransactionLogger] ERRORE start transaction:", error.message);
+      console.error("[TransactionLogger] ERRORE start transaction:", error.message);
       console.error("Stack:", error.stack);
       console.error("SQL Error Code:", error.code);
       return null;

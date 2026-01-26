@@ -1,15 +1,19 @@
-//errorHandler.js - Sistema centralizzato gestione errori ComixCity
+//Sistema centralizzato per gestione errori - cattura eccezioni, distingue errori operazionali da bug,
+//mostra messaggi utente-friendly con flash messages e redirect intelligenti per ogni sezione del sito
+
 const { setFlash } = require('./flashHelper');
 
+//classe per errori controllati 
 class AppError extends Error {
   constructor(message, statusCode) {
     super(message);
     this.statusCode = statusCode;
-    this.isOperational = true;
+    this.isOperational = true; //errori previsti es: biglietto non disponibile
     Error.captureStackTrace(this, this.constructor);
   }
 }
 
+//Middleware principale che gestisce tutti gli errori - operazionali (redirect con flash message alla sezione corretta) - richieste AJAX: risponde con JSON {success:false, message:..}
 const errorHandler = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
@@ -65,12 +69,14 @@ const errorHandler = (err, req, res, next) => {
   });
 };
 
+//Wrapper per route async - cattura automaticamente errori da funzioni async 
 const catchAsync = (fn) => {
   return (req, res, next) => {
     fn(req, res, next).catch(next);
   };
 };
 
+//gestisce 404 (pagine inesistenti) - renderizza a 404.ejs
 const notFound = (req, res, next) => {
   //Usa il tuo 404.ejs esistente
   res.status(404).render('404', { 

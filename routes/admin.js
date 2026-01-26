@@ -1,3 +1,6 @@
+/*Gestisce la dashboard dell'admin - area riservata per visualizzar statistiche e dati del sito
+Ottimizzazione - Promise.all() esegue tutte le query contemporaneamente invece che in sequenza, cosè la dashboard carica + veloce
+Pagina /admin mostra panoramica completa del sito con i dati e statistiche in real-time ed è accessibile solo agli amministratori*/
 const express = require("express");
 const router = express.Router();
 const getDb = require("../db");
@@ -7,16 +10,20 @@ const fs = require("fs");
 const path = require("path");
 const { getFlashMessage } = require("../middleware/flashHelper");
 
-// ===== CONFIGURAZIONE =====
+//Configurazione
 const tempDir = path.join(__dirname, "../temp");
 
-// Crea cartella temp se non esiste
+//Crea cartella temp se non esiste
 if (!fs.existsSync(tempDir)) {
   fs.mkdirSync(tempDir, { recursive: true });
 }
 
 
-// ===== DASHBOARD ADMIN =====
+//DASHBOARD ADMIN
+//onlyAdmin - middleware che blocca accessi non autorizzati (accesso esclusivo all'admin)
+//Dashboard GET /admin - fa 9 query parallele e per valocità nel caricamento, carica tutti i dati simultaneamente
+//Dati delle tabelle: utenti registrati, stand prenotati, eventi prenotati attivi, biglietti acquistati
+//Statistiche: totale utenti, stand prenotati, eventi attivi, biglietti venduti, incasso totale 
 router.get("/", onlyAdmin, catchAsync(async (req, res) => {
   const db = await getDb();
 

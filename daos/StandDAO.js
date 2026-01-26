@@ -1,10 +1,17 @@
+/*DAO per gli stand espositivi - gestisce le prenotazioni degli spazi fieristici (tabelle stand e stand_prenotati)
+La caratteristica chiave è il calcolo dinamico della disponibilità tramite JOIN e GROUPBY invece di memorizzare un campo 'disponibili' statico*/ 
+
 class StandDAO {
   constructor(db) {
     this.db = db;
   }
 
   /**
-   * Recupera tutti gli stand con calcolo dinamico posti
+   * Recupera tutti gli stand con calcolo dinamico posti - JOIN con stand_prenotati e utenti
+   * Calcola posti_totali come capienza, posti_occupati e fa count prenotazioni, posti_disponibili come capienza - occupati 
+   * Ritorna 'espositori' che è la lista nomi degli utenti espositori che hanno prenotato lo stand
+   * Ordinamento stand per padiglione e nome 
+   * Uso: visualizzazione admin in dashboard
    */
   async getTutti() {
     const sql = `
@@ -24,7 +31,7 @@ class StandDAO {
   }
 
   /**
-   * Recupera solo stand con posti disponibili
+   * Recupera solo stand con posti disponibili -> usato in pagina pubblica degli stand (mostra solo prenotabili)
    */
   async getDisponibili() {
     const sql = `
@@ -66,6 +73,7 @@ class StandDAO {
 
   /**
    * Verifica se un utente ha già prenotato questo stand
+   * Cerca in stand_prenotati la combinazione utente+stand e ritorna record se esiste, altrimenti undefined -> usato per impedire le doppie prenotazioni
    */
   async haPrenotato(userId, standId) {
     const sql = "SELECT * FROM stand_prenotati WHERE utente_id = ? AND stand_id = ?";
@@ -75,6 +83,7 @@ class StandDAO {
   /**
    * Prenota un posto nello stand
    * La disponibilità viene calcolata dinamicamente
+   * ritorna ID della prenotazione -> usato quando espositore prenota stand
    */
   async prenota(userId, standId) {
     const insertSql = `
@@ -88,6 +97,8 @@ class StandDAO {
   /**
    * Annulla prenotazione di un posto
    * La disponibilità viene calcolata dinamicamente
+   * Fa delete da stand_prenotati e la disponibilità si aggiorna automaticamente 
+   * Uso: annullamento prenotazione
    */
   async annulla(userId, standId) {
     const deleteSql = "DELETE FROM stand_prenotati WHERE utente_id = ? AND stand_id = ?";

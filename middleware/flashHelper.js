@@ -1,3 +1,5 @@
+/*Gestione flash messages cioè messaggi temporanei che appaiono dopo un'azione es: login effettuato con successo*/
+
 function getFlashMessage(req) {
   const successMessages = {
     //LOGIN / ACCOUNT
@@ -141,6 +143,7 @@ function getFlashMessage(req) {
  * @param {Object} req - Express request object
  * @param {string} type - Tipo di messaggio: 'success' | 'error' | 'info'
  * @param {string} key - Chiave del messaggio (es: 'login_complete', 'invalid_credentials')
+ * In pratica salva messaggio nella sessione
  */
 function setFlash(req, type, key) {
   if (!req.session) {

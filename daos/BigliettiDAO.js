@@ -1,30 +1,33 @@
 //Data Access Object per i biglietti.
+/*BigliettiDAO.js → DAO - Data Access Object per i biglietti: è il ponte tra il codice e il db, cioè gestisce tutte le operazioni sui biglietti nella tabella biglietti (database) 
+Pattern DAO: separa la logica di business (route/controller) dall’accesso ai dati (SQL). Le route chiamano metodi DAO invece di scrivere SQL direttamente. */ 
 
 class BigliettiDAO {
   constructor(db) {
     this.db = db;
   }
 
-  //ritorna tutti i biglietti
+  //ritorna tutti i biglietti (anche quelli esauriti) → usato da admin
   async getTutti() {
     const sql = "SELECT * FROM biglietti";
     return await this.db.all(sql);
   }
 
-  //Ritorna solo i biglietti disponibili (> 0)
+  //Ritorna solo i biglietti disponibili (> 0): ordinamento gratis per primi, poi prezzo decrescente. Usato da pagine pubbliche dei biglietti 
   async getDisponibili() {
     const sql =
       "SELECT * FROM biglietti WHERE disponibili > 0 ORDER BY CASE WHEN prezzo = 0 THEN 1 ELSE 0 END, prezzo DESC";
     return await this.db.all(sql);
   }
 
-  //Dato un ID, ritorna i dettagli del biglietto
+  //Dato un ID, ritorna i dettagli del singolo biglietto
   async getById(id) {
     const sql = "SELECT * FROM biglietti WHERE id = ?";
     return await this.db.get(sql, [id]);
   }
 
-  //Aggiorna la quantità disponibile (dopo acquisto)
+  //Aggiorna la quantità disponibile (dopo acquisto) - scala disponibilità dopo acquisto 
+  //Logica critica: verifica che ci siano abbastanza biglietti, se insufficienti lancia errore (previene overselling)
   async aggiornaDisponibili(id, nuovaQuantita) {
     const sql = `
     UPDATE biglietti 
@@ -40,13 +43,14 @@ class BigliettiDAO {
     return result.changes;
   }
 
-  //Cerca un biglietto per nome (decommenta se serve)
+  //Cerca un biglietto per nome
   async getByNome(nome) {
     const sql = "SELECT * FROM biglietti WHERE nome = ?";
     return await this.db.get(sql, [nome]);
   }
 
   //Ritorna il totale biglietti venduti e incasso
+  //Statistiche per admin: ritorna il totale venduti + incasso per tipo di biglietto - fa JOIN con tabella biglietti_acquistati 
   async getStatisticheVendite() {
     const sql = `
     SELECT 

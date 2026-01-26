@@ -10,7 +10,9 @@ const PrenotazioneEventiDAO = require("../daos/PrenotazioneEventiDAO");
 const { getFlashMessage, setFlash } = require("../middleware/flashHelper");
 
 //GET /areapersonale - Visualizza area personale utente
+//Protetta: solo utenti loggati -> ensureAuthenticated
 //Mostra biglietti acquistati, stand prenotati, eventi prenotati
+//Carica dati personalizzati per ruolo - Utenti: biglietti acquistati, Espositori: stand prenotati 
 router.get(
   "/",
   ensureAuthenticated,
@@ -74,8 +76,12 @@ router.get(
   })
 );
 
+
 //POST /areapersonale/modifica - Modifica username e email
-//Usa validators.updateProfile per validare input
+//Protetta: solo utenti loggati -> ensureAuthenticated
+//Usa validators.updateProfile per validare input - controlla formato: se nessun cambio: errore. Se email già usata: error. Se username già usato: error. 
+//poi aggiorna il db +  la sessione con req.login() (passport)
+//infine fa redirect con flash message profilo aggiornato
 router.post(
   "/modifica",
   ensureAuthenticated,
@@ -133,7 +139,7 @@ router.post(
 );
 
 //POST /areapersonale/cambia-password - Cambia password utente
-//Validazione inline (specifica per questa route, non serve centralizzarla)
+//Validazione inline: password attuale corretta (bcrypt.compare)
 router.post(
   "/cambia-password",
   ensureAuthenticated,

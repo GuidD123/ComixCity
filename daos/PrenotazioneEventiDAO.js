@@ -1,9 +1,15 @@
+/*DAO per le prenotazioni eventi: gestisce le iscrizioni degli utenti agli eventi nella tabella eventi_prenotati
+Gestione completa delle prenotazioni, storico conservato, prevenzione dei duplicati
+Quando utente prenota un evento, il sistema chiama prenotazioneEventiDAO.prenotaUtente(), e nell'area personale usa getPrenotazioniByUtente() per mostrare "I miei eventi"!*/ 
+
 class PrenotazioneEventiDAO {
   constructor(db) {
     this.db = db;
   }
 
   //Prenota un utente a un evento
+  //Iscrive un utente ad un evento - inserisce record in eventi_prenotati
+  //Gestisce duplicati: se già iscritto ritorna null -> usato quando utente clicca prenota su evento 
   async prenotaUtente(
     eventoId,
     utenteId,
@@ -37,6 +43,7 @@ class PrenotazioneEventiDAO {
   }
 
   //Annulla una prenotazione (cambia stato in 'annullata')
+  //cancella prenotazione -> cambia stato da attiva ad annullata (non elimina dal db) ma mantiene storico di chi si è cancellato -> uso in area personale
   async annullaPrenotazione(eventoId, utenteId) {
     const sql = `
       UPDATE eventi_prenotati
@@ -46,14 +53,14 @@ class PrenotazioneEventiDAO {
     return result.changes;
   }
 
-  //Elimina definitivamente una prenotazione (opzionale, usalo solo se vuoi davvero cancellare la riga)
+  //Elimina definitivamente una prenotazione -> hard delete, fa il delete dalla tabella, elimina riga -> usato da admin 
   async eliminaPrenotazione(eventoId, utenteId) {
     const sql = `DELETE FROM eventi_prenotati WHERE evento_id = ? AND utente_id = ?`;
     const result = await this.db.run(sql, [eventoId, utenteId]);
     return result.changes;
   }
 
-  //Lista tutti gli eventi prenotati da un utente
+  //Lista tutti gli eventi prenotati da un utente -> fa join con tabella eventi per avere titolo/descrizione/data -> di default solo prenotazioni attive -> uso in area personale "I miei eventi"
   async getPrenotazioniByUtente(utenteId, includeAnnullate = false) {
     const params = [utenteId];
     let sql = `
@@ -85,7 +92,7 @@ class PrenotazioneEventiDAO {
     }
   }
 
-  //Lista tutti i partecipanti di un evento
+  //Lista tutti i partecipanti di un evento -> ritorna elenco degli iscritti ad un evento facendo join con tabella utenti per avere usernam/email -> uso admin dalla dashboard
   async getPartecipanti(eventoId, stato = "attiva") {
     const sql = `
       SELECT u.*, u.username, u.email,  p.data_prenotazione, p.stato, p.tipo_partecipazione, p.note
@@ -96,7 +103,7 @@ class PrenotazioneEventiDAO {
     return await this.db.all(sql, [eventoId, stato]);
   }
 
-  //Verifica se un utente è già prenotato per un evento (utile per evitare doppioni)
+  //Verifica se un utente è già prenotato per un evento - ritorna record se iscritto altrimenti undefined -> usato per mostrare/nascondere button Prenota o Annulla
   async isPrenotato(eventoId, utenteId) {
     const sql = `
       SELECT * FROM eventi_prenotati
@@ -104,7 +111,7 @@ class PrenotazioneEventiDAO {
     return await this.db.get(sql, [eventoId, utenteId]);
   }
 
-  //Conta quanti iscritti attivi ha un evento
+  //Conta quanti iscritti attivi ha un evento -> count prenotazioni attive
   async contaIscritti(eventoId) {
     const sql = `
       SELECT COUNT(*) as totale

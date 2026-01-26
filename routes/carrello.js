@@ -1,3 +1,4 @@
+/*Gestione carrello e checkout biglietti*/
 const express = require("express");
 const router = express.Router();
 const getDb = require("../db");
@@ -10,13 +11,18 @@ const { getFlashMessage, setFlash } = require("../middleware/flashHelper");
 
 const MAX_TICKETS_PER_USER = 5;
 
-//Inizializza carrello
+//Inizializza carrello in sessione se non esiste - ogni richiesta ha accesso a req.session.carrello 
 function initCarrello(req, res, next) {
   if (!req.session.carrello) req.session.carrello = [];
   next();
 }
 
-//GET /carrello
+
+//GET /carrello - visualizza carrello: aggiornamento dinamico dei prezzi (legge prezzi dal db e impedisce manomissioni client-side)
+//Rimozione items invalidi - se biglietto non esiste più lo elimina
+//Calcolo prezzo totale: somma prezzo * quantità per ogni item 
+//Controllo dei permessi: verifica se utente può fare checkout: solo se loggato + ruolo 'utente' o 'admin'  
+//Mostra render del carrello con totale e button checkout se autorizzato 
 router.get(
   "/",
   initCarrello,
@@ -63,7 +69,15 @@ router.get(
   })
 );
 
-//POST /carrello/aggiungi
+
+
+//POST /carrello/aggiungi -  Aggiungi biglietto 
+//Validazione: validators.carrelloItem che controlla ID, quantità e prezzo 
+//Verifica se biglietto esiste nel db 
+//Limita il carrello: max 5 biglietti per tipo nel carrello 
+//Limite storico utente loggato: la query somma gli acquisti precedenti + carrello attuale (max 5 totali)
+//Aggiornamento: se item già presente incrementa quantità altrimenti push nuovo 
+//Risposta JSON {success:true, carrelloLength:..} per AJAX 
 router.post(
   "/aggiungi",
   initCarrello,
@@ -127,6 +141,7 @@ router.post(
   })
 );
 
+
 //POST /carrello/incrementa/:index
 router.post("/incrementa/:index", initCarrello, (req, res) => {
   const i = parseInt(req.params.index);
@@ -174,6 +189,9 @@ router.post("/svuota", initCarrello, (req, res) => {
 });
 
 //GET /carrello/checkout
+//Protezione: requiredRole("utente", "admin") blocca espositori 
+//Per ogni item controlla disponibili >= quantità
+//Aggiorna prezzi rileggendoli dal db
 router.get(
   "/checkout",
   requireRole("utente", "admin"),
@@ -230,7 +248,14 @@ router.get(
   })
 );
 
+
 //POST /carrello/checkout
+//Pagina del checkout in cui completo acquisto biglietti
+
+//Setup iniziale: 
+//- Protezione: requireRole("utente", "admin") blocca espositori
+//- validateCheckout: controlla i campi form (nome, email, cap, carta...)
+//- catchAsync: cattura errori async e passa a errorHandler
 router.post(
   "/checkout",
   requireRole("utente", "admin"),
@@ -241,6 +266,12 @@ router.post(
     const userId = req.user.id;
     const carrello = req.session.carrello;
 
+
+    //Preparazione: 
+    /*- Verifica carrello vuoto, redirect se vuoto
+    - Per ogni item ricontrolla disponibilità >= quantità*/
+    //Fa controlli preliminari: carrello esiste e non è vuoto?
+    //Estrae dati dal form: metodo di pagamento, carta, fatturazione
     if (!carrello?.length) {
       setFlash(req, 'error', 'carrello_vuoto');
       return res.redirect("/carrello");
@@ -258,15 +289,20 @@ router.post(
       billingZip,
     } = req.body;
 
+    //Inizio transazione atomica -> inizia transazione database con lock pessimistico. 
+    //IMMEDIATE = blocca subito scritture da parte di altri utenti
+    //Garantisce isolamento cioè nessun altro può modificare disponibilità biglietti durante checkout 
+    /*2 utenti comprano biglietto contemporaneamente (senza lock entrambi vedono disponibile 1), con IMMEDIATE, primo utente blocca il secondo che aspetta*/
     await db.run("BEGIN IMMEDIATE");
 
     try {
-      //Ricalcola totale DENTRO la transazione con lock
+
+      //Ricalcola totale dentro la transazione con lock -> verifica disponibilità
       let totaleReale = 0;
       const bigliettiVerificati = [];
 
       for (const item of carrello) {
-        //Lock esplicito sulla riga
+        //Lock esplicito sulla riga - select dentro transazione blocca la riga
         const bigliettoDB = await db.get(
           "SELECT id, nome, prezzo, disponibili FROM biglietti WHERE id = ?",
           [item.id]
@@ -276,7 +312,7 @@ router.post(
           throw new Error(`Biglietto non trovato: ID ${item.id}`);
         }
 
-        //Verifica disponibilità DENTRO la transazione
+        //Verifica disponibilità dentro la transazione - controlla disponibilità
         if (bigliettoDB.disponibili < item.quantita) {
           throw new Error(
             `Biglietti insufficienti per ${bigliettoDB.nome}. ` +
@@ -294,13 +330,18 @@ router.post(
           disponibiliDB: bigliettoDB.disponibili,
         });
       }
+      //qui c'è il ricalcolo totale con lock implicito (select in transazioni blocca fino a COMMIT) e fa verifica atomica cioè controlla disponibilità con dati nuovi e bloccati 
+      //quindi salva dati sicuri per fase successiva in array verificato 
+
+
 
       //Validazione totale (consente anche biglietti gratuiti con totale = 0)
       if (isNaN(totaleReale) || totaleReale < 0) {
         throw new Error("Totale non valido");
       }
 
-      //Log transazione (opzionale, non blocca checkout se fallisce)
+
+      //Log transazione -> salva tentativo in transaction_log e se logging fallisce non blocca vendita
       const transactionLog = await TransactionLogger.startTransaction(
         userId,
         paymentMethod || "standard",
@@ -318,8 +359,11 @@ router.post(
         );
       }
 
-      //Simulazione pagamento (questo può restare fuori dalla transazione DB)
-      //NOTA: In produzione, questa chiamata API esterna dovrebbe avere timeout
+
+      //Simulazione pagamento (resta fuori dalla transazione DB per evitare deadlock)
+      //ritorna sempre successo per demo
+      //in produzione andrebbe chiamata una API Stripe/Paypal..
+      //Se fallisce lancia errore -> ROLLBACK automatico mi rimanda nel catch 
       const paymentResult = await simulatePaymentProcessing(paymentMethod, {
         cardNumber,
         expiryDate,
@@ -337,6 +381,7 @@ router.post(
         throw new Error(paymentResult.error || "Pagamento rifiutato");
       }
 
+      //Aggiornamento disponibilità -> SET disponibili = disponibili - ? decrementa atomicamente e WHERE id = ? AND disponibili >= ? aggiorna solo se ancora disponibili!
       for (const item of bigliettiVerificati) {
         const updateResult = await db.run(
           `UPDATE biglietti 
@@ -345,7 +390,7 @@ router.post(
           [item.quantita, item.id, item.quantita]
         );
 
-        //Double-check (dovrebbe sempre passare grazie al lock)
+        //Double-check (dovrebbe sempre passare grazie al lock) -> se qualcuno ha comprato nel frattempo fa rollback 
         if (updateResult.changes === 0) {
           throw new Error(
             `Errore aggiornamento disponibilità per ${item.nomeDB}. ` +
@@ -354,6 +399,9 @@ router.post(
         }
 
         //Verifica limite acquisti per utente
+        //ogni utente può comprare al MAX 5 biglietti per tipo
+        //La query somma acquisti storici + elementi nel carrello corrente 
+        //Se supera 5 item -> errore + ROLLBACK 
         const acquistiPrecedenti = await db.get(
           `SELECT COALESCE(SUM(quantita), 0) as tot
            FROM biglietti_acquistati 
@@ -361,7 +409,7 @@ router.post(
           [userId, item.id]
         );
 
-        const MAX_TICKETS_PER_USER = 5; //Dovrebbe venire da config
+        const MAX_TICKETS_PER_USER = 5; 
         if (
           (acquistiPrecedenti?.tot || 0) + item.quantita >
           MAX_TICKETS_PER_USER
@@ -370,7 +418,9 @@ router.post(
         }
       }
 
-      //Inserisci acquisti
+      //Inserisci acquisti come record in biglietti_acquistati per ogni tipo di biglietto
+      //Dati: utente, biglietto, quantità, prezzi, metodo pagamento, transaction_id
+      //Dati fatturazione: nome, email
       let primoAcquistoId = null;
       for (const item of bigliettiVerificati) {
         const totaleRiga = item.quantita * item.prezzoReale;
@@ -397,6 +447,8 @@ router.post(
         if (!primoAcquistoId) primoAcquistoId = result.lastID;
       }
 
+      //COMMIT - rende permanente cioè salva tutte le modifiche in modo permanente 
+      //rilascia il lock quindi altri possono comprare 
       await db.run("COMMIT");
 
       //Log successo (solo se logging attivo)
@@ -408,7 +460,7 @@ router.post(
         );
       }
 
-      //Svuota carrello
+      //Svuota carrello -> acquisto fatto con redirect con flash message "Acquisto completato"
       req.session.carrello = [];
 
       console.log(`Checkout completato. Transaction ${finalTransactionId}`);
@@ -418,7 +470,9 @@ router.post(
       );
     } catch (err) {
       try {
-        await db.run("ROLLBACK");
+        await db.run("ROLLBACK"); //Annulla tutte le modifiche (qualsiasi errore) - database torna allo stato pre-transazione 
+        //Disponibilità non scalata, acquisti non salvati 
+        //Scenari catch: biglietti esauriti, limite 5 item superato, carta rifiutata, errore server
       } catch (rollbackError) {
         console.error("Errore durante rollback:", rollbackError.message);
       }
@@ -451,7 +505,7 @@ router.post(
   })
 );
 
-// ===== FUNZIONI DI SUPPORTO =====
+//Funzioni di supporto
 async function simulatePaymentProcessing(paymentMethod, paymentData) {
   //Per demo/esame: pagamento sempre accettato, nessun esito casuale
   return new Promise((resolve) => {
