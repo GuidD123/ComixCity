@@ -3,21 +3,21 @@ const router = express.Router();
 
 
 router.get("/", (req, res, next) => {
-  // Se non c'è utente loggato, redirect immediato
+  //Se non c'è utente loggato, redirect immediato
   if (!req.user) {
     return res.redirect("/?info=not_logged_in");
   }
 
   const user = req.user;
 
-  // Salva carrello PRIMA di distruggere la sessione
+  //Salva carrello prima di distruggere la sessione
   const carrelloBackup = req.session.carrello || [];
 
   //Logout Passport
   req.logout((err) => {
     if (err) {
       console.error("Errore durante logout:", err);
-      return next(err); // Passa l'errore al middleware di gestione errori
+      return next(err); //Passa l'errore al middleware di gestione errori
     }
 
     //Distruggi sessione
@@ -51,7 +51,7 @@ router.get("/", (req, res, next) => {
 
 
 function ripristinaCarrelloDaCookie(req, res, next) {
-  // Solo se non c'è già un carrello in sessione E c'è il cookie temporaneo
+  //Solo se non c'è già un carrello in sessione E c'è il cookie temporaneo
   if (!req.session.carrello && req.cookies?.carrello_temp) {
     try {
       const carrello = JSON.parse(req.cookies.carrello_temp);

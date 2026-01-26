@@ -14,7 +14,7 @@ function checkLoginRateLimit(identifier) {
   const now = Date.now();
   const attempts = loginAttempts.get(identifier) || { count: 0, firstAttempt: now, lockedUntil: null };
   
-  // Se è in lockout, controlla se è scaduto
+  //Se è in lockout, controlla se è scaduto
   if (attempts.lockedUntil && now < attempts.lockedUntil) {
     const remainingMinutes = Math.ceil((attempts.lockedUntil - now) / 60000);
     return { 
@@ -23,14 +23,14 @@ function checkLoginRateLimit(identifier) {
     };
   }
   
-  // Reset se è passato troppo tempo dall'ultimo tentativo
+  //Reset se è passato troppo tempo dall'ultimo tentativo
   if (now - attempts.firstAttempt > RATE_LIMIT_WINDOW) {
     attempts.count = 0;
     attempts.firstAttempt = now;
     attempts.lockedUntil = null;
   }
   
-  // Se ha superato il limite, blocca
+  //Se ha superato il limite, blocca
   if (attempts.count >= MAX_LOGIN_ATTEMPTS) {
     attempts.lockedUntil = now + LOCKOUT_TIME;
     loginAttempts.set(identifier, attempts);
@@ -45,7 +45,7 @@ function checkLoginRateLimit(identifier) {
 
 function recordLoginAttempt(identifier, success = false) {
   if (success) {
-    // Se login riuscito, reset counter
+    //Se login riuscito, reset counter
     loginAttempts.delete(identifier);
     return;
   }
@@ -63,9 +63,9 @@ function recordLoginAttempt(identifier, success = false) {
 
 
 
-// ========== ROUTES ==========
+//ROUTES
 router.get('/', (req, res) => {
-  // Passa query e user al template per flash-messages partial
+  //Passa query e user al template per flash-messages partial
   res.render('login', { 
     user: req.user || null,
     flashMessage: getFlashMessage(req),
@@ -77,7 +77,7 @@ router.post('/', (req, res, next) => {
   const email = req.body.email?.toLowerCase()?.trim() || '';
   const ip = req.ip || req.socket.remoteAddress || req.headers['x-forwarded-for'] || 'unknown';
   
-  // Identifica per email E IP per evitare bypass
+  //Identifica per email e IP per evitare bypass
   const identifier = `${email}_${ip}`;
   
   if (!email || !req.body.password) {
@@ -96,7 +96,7 @@ router.post('/', (req, res, next) => {
     return res.redirect('/login?error=rate_limited&email=' + encodeURIComponent(email));
   }
   
-  // ========== PASSPORT AUTHENTICATION ==========
+  //PASSPORT AUTHENTICATION
   passport.authenticate('local', (err, user, info) => {
     if (err) {
       SessionLogger.logFailedLogin(email, `Errore sistema: ${err.message}`, req);
@@ -110,7 +110,7 @@ router.post('/', (req, res, next) => {
       return res.redirect('/login?error=invalid_credentials&email=' + encodeURIComponent(email));
     }
     
-    // ========== LOGIN RIUSCITO ==========
+    //LOGIN RIUSCITO
     req.logIn(user, (err) => {
       if (err) {
         SessionLogger.logFailedLogin(email, `Errore creazione sessione: ${err.message}`, req);
@@ -141,7 +141,7 @@ router.post('/', (req, res, next) => {
   })(req, res, next);
 });
 
-// ========== PULIZIA PERIODICA ==========
+//PULIZIA PERIODICA 
 
 // Pulizia periodica rate limits
 setInterval(() => {

@@ -94,7 +94,7 @@ router.post(
 
     await db.run("BEGIN IMMEDIATE");
     try {
-      // Verifica se lo stand esiste e ha posti disponibili
+      //Verifica se lo stand esiste e ha posti disponibili
       const stand = await db.get(
         `SELECT 
           s.*,
@@ -120,7 +120,7 @@ router.post(
         );
       }
 
-      // Verifica se l'utente ha già prenotato QUESTO stand
+      //Verifica se l'utente ha già prenotato lo stand corrente
       const giaPrenotatoQuestoStand = await db.get(
         "SELECT id FROM stand_prenotati WHERE utente_id = ? AND stand_id = ?",
         [userId, standId]
@@ -133,7 +133,7 @@ router.post(
         );
       }
 
-      // CONTROLLO: Un espositore può avere solo 1 stand in totale
+      //Controllo se espositore può avere solo 1 stand in totale
       const haGiaUnoStand = await db.get(
         "SELECT s.nome FROM stand_prenotati sp JOIN stand s ON sp.stand_id = s.id WHERE sp.utente_id = ?",
         [userId]
@@ -145,7 +145,7 @@ router.post(
         return res.redirect('/stand');
       }
 
-      // Prenota un posto
+      //Prenota un posto
       await standDao.prenota(userId, standId);
       await db.run("COMMIT");
 
