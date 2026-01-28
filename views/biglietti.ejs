@@ -119,7 +119,7 @@
                         <button
                           type="button"
                           class="btn-quantity btn-decrementa"
-                          onclick="decrementQuantity('<%= biglietto.id %>')"
+                          data-biglietto-id="<%= biglietto.id %>"
                           aria-label="Diminuisci quantità"
                           title="Diminuisci quantità"
                         >
@@ -143,7 +143,7 @@
                         <button
                           type="button"
                           class="btn-quantity btn-incrementa"
-                          onclick="incrementQuantity('<%= biglietto.id %>')"
+                          data-biglietto-id="<%= biglietto.id %>"
                           aria-label="Aumenta quantità"
                           title="Aumenta quantità"
                         >

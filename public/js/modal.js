@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
       feat.appendChild(li);
     }
 
-    // Gestione pulsante CTA in base alla prenotabilità
+    //Gestione pulsante in base alla prenotabilità
     const prenotabile = card.dataset.prenotabile === "1"; 
     const isLogged = document.body.dataset.user === "1"; 
 
@@ -117,12 +117,12 @@ document.addEventListener("DOMContentLoaded", () => {
     fillContent(card);
     lastFocus = document.activeElement;
 
-    // Preparazione: mostra il modal invisibile per calcolare i bounds
+    //Preparazione: mostra il modal invisibile per calcolare i bounds
     modal.style.display = "block";
     modal.classList.remove("is-open");
     lockScroll();
 
-    // Calcolo origine animazione rispetto al pannello già visibile
+    //Calcolo origine animazione rispetto al pannello già visibile
     requestAnimationFrame(() => {
       const rect = panel.getBoundingClientRect();
       const ox = rect.width ? ((clientX - rect.left) / rect.width) * 100 : 50;
@@ -134,34 +134,34 @@ document.addEventListener("DOMContentLoaded", () => {
       const viewportHeight = window.innerHeight;
       const modalHeight = Math.min(viewportHeight * 0.9, 600); // max altezza modal
 
-      // Calcola la posizione Y ottimale
+      //Calcola la posizione Y ottimale
       let modalTop = cardRect.top + cardRect.height / 2 - modalHeight / 2;
 
-      // Assicura che il modal non esca dal viewport
+      //Assicura che il modal non esca dal viewport
       const margin = 20; 
       modalTop = Math.max(
         margin,
         Math.min(modalTop, viewportHeight - modalHeight - margin)
       );
 
-      // Applica la posizione al modal
+      //Applica la posizione al modal
       panel.style.position = "fixed";
       panel.style.top = `${modalTop}px`;
       panel.style.left = "50%";
       panel.style.transform = "translateX(-50%) scale(0.94)";
       panel.style.margin = "0";
-      // Avvio animazione
+      //Avvio animazione
       modal.classList.add("is-open");
       modal.addEventListener("keydown", focusTrap);
-      // Focus iniziale
+      //Focus iniziale
       const firstFocusable = modal.querySelector(FOCUS_SEL);
       (firstFocusable || panel).focus();
     });
   }
 
-  // Delegazione click
+  //Delegazione click
   document.addEventListener("click", (e) => {
-    // Apri da bottone Info
+    //Apri da bottone Info
     const btn = e.target.closest(".btn-info");
     if (btn) {
       const card = btn.closest(".evento-card");
@@ -170,18 +170,18 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Chiudi: X o backdrop
+    //Chiudi: X o backdrop
     if (e.target.matches("[data-close]")) {
       closeModal();
       return;
     }
-    // Chiudi cliccando fuori dal pannello
+    //Chiudi cliccando fuori dal pannello
     if (e.target === modal) {
       closeModal();
     }
   });
 
-  // ESC chiude
+  //ESC chiude
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && modal.classList.contains("is-open")) closeModal();
   });
