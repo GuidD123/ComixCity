@@ -53,29 +53,6 @@ Il progetto usa **Node.js + Express** con rendering lato server (EJS) e database
 
 ---
 
-## 🔑 Credenziali di Test
-
-Il database include già questi account per testare l'applicazione:
-
-### Amministratore
-- **Email**: `admin123@comixcity.com`
-- **Password**: `AdminTest1`
-- **Funzionalità**: dashboard statistiche, gestione eventi, visualizzazione utenti
-
-### Utente Normale
-- **Username**: `MarioUtente`
-- **Email**: `utente_test@gmail.com`
-- **Password**: `UtenteTest1`
-- **Funzionalità**: acquisto biglietti, prenotazione eventi
-
-### Espositore
-- **Username**: `espositore_test`
-- **Email**: `espositore_test@gmail.com`
-- **Password**: `EspositoreTest1`
-- **Funzionalità**: prenotazione stand
-
----
-
 ## 🛠️ Tecnologie Utilizzate
 
 ### Backend
